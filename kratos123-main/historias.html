@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HISTÓRIAS — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .hero {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(139,0,0,0.2) 0%, transparent 70%), var(--dark);
+    border-bottom: 4px double var(--gold);
+    text-align: center;
+  }
+
+  .hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(32px, 6vw, 64px); color: #fff; text-shadow: 0 0 20px var(--blood); }
+
+  .section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1000px; margin: 0 auto; }
+
+  .story-card {
+    background: var(--dark2);
+    border: 1px solid var(--stone);
+    margin-bottom: 4rem;
+    padding: 3rem;
+    position: relative;
+    border-left: 4px solid var(--blood);
+  }
+
+  .story-card::before {
+    content: '◈';
+    position: absolute;
+    top: -15px;
+    left: 20px;
+    color: var(--blood);
+    background: var(--dark);
+    padding: 0 10px;
+    font-size: 24px;
+  }
+
+  .char-name { font-family: 'Cinzel Decorative', serif; font-size: 28px; color: var(--gold-light); margin-bottom: 1rem; }
+  .char-role { font-size: 12px; text-transform: uppercase; letter-spacing: 0.3em; color: var(--muted); margin-bottom: 2rem; display: block; }
+  .char-bio { font-family: 'IM Fell English', serif; font-size: 18px; line-height: 1.8; color: var(--ash); }
+  .char-bio em { color: var(--gold); }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .story-card { padding: 2rem 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- O Menu agora é gerado apenas pelo script.js -->
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Aliados e Rivais</p>
+  <h1 class="hero-title">CONTOS DOS REINOS</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+
+    <div class="story-card">
+      <span class="char-role">A Bruxa da Floresta · Deusa Vanir</span>
+      <h2 class="char-name">Freya</h2>
+      <p class="char-bio">
+        Antiga Rainha das Valquírias e ex-esposa de <em>Odin</em>, Freya viveu séculos em exílio. Sua história é marcada pelo sacrifício: ela aceitou um casamento odiado para proteger seu povo, os Vanir. Após a morte de seu filho <em>Baldur</em> pelas mãos de Kratos, ela foi consumida pelo desejo de vingança, até perceber que o verdadeiro inimigo sempre foi o Pai de Todos.
+      </p>
+    </div>
+
+    <div class="story-card" style="border-left-color: var(--gold);">
+      <span class="char-role">O Homem mais Sábio do Mundo</span>
+      <h2 class="char-name">Mímir</h2>
+      <p class="char-bio">
+        Uma vez conselheiro de Odin, Mímir foi aprisionado em uma árvore por séculos até ser libertado por Kratos (da única forma possível: perdendo o corpo). Agora, como uma cabeça mantida viva por magia, ele serve como o <em>guia intelectual</em> e bússola moral da dupla, carregando o conhecimento de todas as lendas e profecias dos Nove Reinos.
+      </p>
+    </div>
+
+    <div class="story-card">
+      <span class="char-role">Os Irmãos Huldra</span>
+      <h2 class="char-name">Brok e Sindri</h2>
+      <p class="char-bio">
+        Os anões lendários que forjaram o <em>Mjölnir</em> e o <em>Machado Leviatã</em>. Enquanto Brok é rude e prático, Sindri sofre de uma fobia patológica por germes. A história deles é uma de reconciliação e tragédia profunda, culminando no sacrifício final de Brok, um evento que mudou para sempre o destino de Sindri e sua relação com Atreus.
+      </p>
+    </div>
+
+    <div class="story-card" style="border-left-color: var(--gold);">
+      <span class="char-role">Gigante de Jötunheim</span>
+      <h2 class="char-name">Angrboda</h2>
+      <p class="char-bio">
+        Uma das últimas Gigantes vivas, Angrboda reside no <em>Ironwood</em>. Ela é a guardiã das profecias e o primeiro elo de Atreus com sua herança gigante. Sua presença é fundamental para que Atreus entenda seu papel como <em>Loki</em>, ajudando-o a aceitar que o destino não é algo escrito em pedra, mas algo moldado por escolhas.
+      </p>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"Cada alma tem um conto a ser contado."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#A52020','#B8860B','#FF4500'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0; background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s; animation-delay:${del}s; --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

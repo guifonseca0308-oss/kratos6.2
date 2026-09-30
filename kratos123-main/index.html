@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>KRATOS — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="fotos/omega.png">
+
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blood:      #8B0000;
+    --embers:     #C0392B;
+    --gold:       #B8860B;
+    --gold-light: #DAA520;
+    --ash:        #D4CFC8;
+    --dark:       #0D0B09;
+    --dark2:      #1A1410;
+    --dark3:      #251E17;
+    --stone:      #3A3028;
+    --muted:      #9a8a7a;
+    --dim:        #7a6a60;
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--dark);
+    color: var(--ash);
+    font-family: 'Cinzel', serif;
+    overflow-x: hidden;
+  }
+
+  #player { display: none; }
+
+  .music-controls {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin: 1.2rem 0 2rem;
+  }
+
+  .music-btn {
+    min-width: 120px;
+    font-size: 0.9rem;
+    padding: 10px 18px;
+  }
+
+  .music-btn:hover {
+    transform: translateY(-2px);
+  }
+
+  /* ─────────── HERO ─────────── */
+  .hero {
+    min-height: 100vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse 80% 60% at 50% 70%, rgba(90,10,10,0.55) 0%, transparent 70%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(139,0,0,0.2) 0%, transparent 60%),
+      #0D0B09;
+  }
+
+  /* Greek key top/bottom borders */
+  .hero::before, .hero::after {
+    content: '';
+    position: absolute;
+    left: 0; right: 0;
+    height: 6px;
+    background: repeating-linear-gradient(
+      90deg,
+      var(--gold) 0px, var(--gold) 10px,
+      var(--blood) 10px, var(--blood) 20px
+    );
+    z-index: 2;
+  }
+  .hero::before { top: 0; }
+  .hero::after  { bottom: 0; background: repeating-linear-gradient(90deg, var(--blood) 0px, var(--blood) 10px, var(--gold) 10px, var(--gold) 20px); }
+
+  /* Ember particles */
+  .embers {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .spark {
+    position: absolute;
+    border-radius: 50%;
+    animation: rise linear infinite;
+    opacity: 0;
+  }
+
+  @keyframes rise {
+    0%   { transform: translateY(0) translateX(0) scale(1); opacity: 0; }
+    15%  { opacity: 1; }
+    85%  { opacity: 0.5; }
+    100% { transform: translateY(-110vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  /* Faint vertical streaks (atmosphere) */
+  .hero-atmosphere {
+    position: absolute;
+    inset: 0;
+    background: repeating-linear-gradient(
+      90deg,
+      transparent 0, transparent 120px,
+      rgba(139,0,0,0.015) 120px, rgba(139,0,0,0.015) 121px
+    );
+    pointer-events: none;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 2;
+    text-align: center;
+    padding: 2rem 1.5rem;
+    animation: heroReveal 1.2s ease forwards;
+  }
+
+  @keyframes heroReveal {
+    from { opacity: 0; transform: translateY(30px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .eyebrow {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(10px, 1.4vw, 14px);
+    letter-spacing: 0.6em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1.2rem;
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(64px, 13vw, 140px);
+    font-weight: 900;
+    line-height: 0.88;
+    color: #fff;
+    text-shadow:
+      0 0 30px rgba(139,0,0,0.9),
+      0 0 70px rgba(139,0,0,0.5),
+      0 0 120px rgba(139,0,0,0.25);
+    letter-spacing: 0.04em;
+  }
+
+  .hero-sub {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: clamp(13px, 1.8vw, 18px);
+    color: #7a6a60;
+    letter-spacing: 0.12em;
+    margin-top: 1.5rem;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .divider-line {
+    height: 1px;
+    width: 90px;
+    background: linear-gradient(90deg, transparent, var(--gold));
+  }
+  .divider-line.r { background: linear-gradient(90deg, var(--gold), transparent); }
+
+  .omega-big {
+    font-size: 32px;
+    color: var(--gold);
+    font-family: serif;
+    filter: drop-shadow(0 0 10px rgba(184,134,11,0.7));
+  }
+
+  .hero-stats {
+    display: flex;
+    gap: 4rem;
+    justify-content: center;
+    margin-top: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat { text-align: center; }
+
+  .stat-num {
+    display: block;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 36px;
+    font-weight: 900;
+    color: var(--blood);
+    text-shadow: 0 0 20px rgba(139,0,0,0.6);
+  }
+
+  .stat-label {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: #5a4a40;
+    text-transform: uppercase;
+    margin-top: 4px;
+  }
+
+  @keyframes glowPulse {
+    0%, 100% { text-shadow: 0 0 20px rgba(139,0,0,0.6); }
+    50% { text-shadow: 0 0 40px rgba(139,0,0,0.9), 0 0 20px rgba(184,134,11,0.6); }
+  }
+
+  .infinity-pulse {
+    animation: glowPulse 3s infinite ease-in-out;
+  }
+
+  .scroll-cue {
+    position: absolute;
+    bottom: 2.5rem;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 3;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    opacity: 0.35;
+    animation: bounce 2.5s ease-in-out infinite 2s;
+  }
+
+  .scroll-cue span {
+    font-size: 9px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  .scroll-cue svg { width: 20px; height: 20px; }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50%       { transform: translateX(-50%) translateY(10px); }
+  }
+
+  /* ─────────── SHARED SECTION ─────────── */
+  .section {
+    padding: 7rem 2rem;
+  }
+
+  .section-inner {
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+  }
+
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(24px, 4vw, 44px);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 2rem;
+  }
+
+  /* ─────────── LORE ─────────── */
+  .lore-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 4rem;
+    align-items: start;
+  }
+
+  .lore-body {
+    font-family: 'IM Fell English', serif;
+    font-size: 17px;
+    line-height: 1.95;
+    color: var(--muted);
+  }
+
+  .lore-body em { color: var(--gold-light); font-style: italic; }
+
+  .lore-aside {
+    padding: 2.5rem;
+    border: 1px solid #2a2018;
+    border-left: 3px solid var(--blood);
+    background: var(--dark2);
+  }
+
+  .lore-aside-title {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 1.5rem;
+  }
+
+  .lore-attrs {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .attr-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #2a2018;
+  }
+
+  .attr-row:last-child { border-bottom: none; padding-bottom: 0; }
+
+  .attr-key {
+    font-size: 11px;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: #5a5050;
+  }
+
+  .attr-val {
+    font-family: 'IM Fell English', serif;
+    font-size: 15px;
+    color: var(--ash);
+  }
+
+  /* ─────────── TIMELINE ─────────── */
+  .timeline-wrap {
+    background: var(--dark2);
+    border-top: 1px solid #2a2018;
+    border-bottom: 1px solid #2a2018;
+  }
+
+  .tl-center {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .timeline {
+    position: relative;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+
+  .timeline::before {
+    content: '';
+    position: absolute;
+    left: 50%;
+    top: 0; bottom: 0;
+    width: 1px;
+    background: linear-gradient(to bottom, transparent, var(--blood) 8%, var(--blood) 92%, transparent);
+    transform: translateX(-50%);
+  }
+
+  .tl-item {
+    display: grid;
+    grid-template-columns: 1fr 24px 1fr;
+    gap: 2rem;
+    margin-bottom: 4rem;
+    align-items: start;
+  }
+
+  .tl-left  { grid-column: 1; }
+  .tl-mid   { grid-column: 2; display: flex; justify-content: center; padding-top: 1.3rem; }
+  .tl-right { grid-column: 3; }
+
+  /* odd items: text left, empty right */
+  .tl-item:nth-child(odd)  .tl-left  { order: 1; }
+  .tl-item:nth-child(odd)  .tl-mid   { order: 2; }
+  .tl-item:nth-child(odd)  .tl-right { order: 3; opacity: 0; pointer-events: none; }
+
+  /* even items: empty left, text right */
+  .tl-item:nth-child(even) .tl-left  { order: 3; opacity: 0; pointer-events: none; }
+  .tl-item:nth-child(even) .tl-mid   { order: 2; }
+  .tl-item:nth-child(even) .tl-right { order: 1; }
+
+  .tl-dot {
+    width: 14px;
+    height: 14px;
+    border-radius: 50%;
+    background: var(--blood);
+    border: 3px solid var(--dark2);
+    box-shadow: 0 0 14px rgba(139,0,0,0.8);
+    flex-shrink: 0;
+    position: relative;
+    z-index: 1;
+  }
+
+  .tl-card {
+    padding: 1.4rem 1.6rem;
+    background: var(--dark3);
+    border: 1px solid #2a2018;
+    transition: border-color 0.3s, background 0.3s;
+  }
+
+  .tl-card:hover {
+    background: #1e170f;
+    border-color: #3a2a18;
+  }
+
+  .tl-item:nth-child(odd) .tl-card   { border-right: 2px solid var(--blood); }
+  .tl-item:nth-child(even) .tl-card  { border-left: 2px solid var(--gold); }
+
+  .tl-era {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 6px;
+  }
+
+  .tl-name {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 8px;
+  }
+
+  .tl-desc {
+    font-family: 'IM Fell English', serif;
+    font-size: 14px;
+    line-height: 1.75;
+    color: var(--dim);
+  }
+
+  /* ─────────── QUOTES ─────────── */
+  .quotes-wrap {
+    background: var(--dark);
+  }
+
+  .quotes-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-top: 3rem;
+  }
+
+  .quote-card {
+    padding: 2.2rem 2.2rem 2.2rem 3rem;
+    background: var(--dark2);
+    border: 1px solid #2a2018;
+    border-left: 3px solid var(--blood);
+    position: relative;
+    transition: border-left-color 0.3s, background 0.3s;
+    cursor: default;
+  }
+
+  .quote-card:hover {
+    background: var(--dark3);
+    border-left-color: var(--gold);
+  }
+
+  .quote-mark {
+    position: absolute;
+    top: 0.8rem;
+    left: 1.2rem;
+    font-size: 56px;
+    line-height: 1;
+    color: var(--blood);
+    opacity: 0.2;
+    font-family: Georgia, serif;
+    pointer-events: none;
+  }
+
+  .quote-text {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: clamp(15px, 2vw, 19px);
+    color: #c9b89a;
+    line-height: 1.7;
+    margin-bottom: 1.2rem;
+  }
+
+  .quote-attr {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+  }
+
+  /* featured quote full-width */
+  .quote-card.featured {
+    grid-column: 1 / -1;
+    border-left-color: var(--gold);
+    background: var(--dark3);
+  }
+
+  .quote-card.featured .quote-text {
+    font-size: clamp(18px, 2.5vw, 26px);
+    color: #e0cfb0;
+  }
+
+  /* ─────────── GAMES ─────────── */
+  .games-wrap {
+    background: var(--dark2);
+    border-top: 1px solid #2a2018;
+  }
+
+  .games-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: #2a2018;
+    margin-top: 3rem;
+    border: 1px solid #2a2018;
+  }
+
+  .game-card {
+    background: var(--dark3);
+    position: relative;
+    overflow: hidden;
+    transition: background 0.3s;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .game-img-wrapper {
+    width: 100%;
+    height: 220px;
+    overflow: hidden;
+    border-bottom: 1px solid #2a2018;
+    position: relative;
+  }
+
+  .game-img-wrapper::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease, filter 0.6s;
+    filter: brightness(0.7) grayscale(0.3);
+  }
+
+  .game-card:hover .game-img-wrapper::before {
+    transform: scale(1.1);
+    filter: brightness(1) grayscale(0);
+  }
+
+  /* IMAGENS DOS JOGOS VIA CSS */
+  .img-gow1::before { background-image: url('fotos/MV5BZTc2YzQ4NDMtYWM0OS00M2RlLWI2YjktODVkNjgxZGFlYmQyXkEyXkFqcGc@._V1_.jpg'); }
+  .img-chains::before { background-image: url('fotos/y3wf1irdsg6c1.jpeg'); }
+  .img-gow2::before { background-image: url('fotos/god-of-war-2-button-1641590949211.webp'); }
+  .img-gow3::before { background-image: url('fotos/god-of-war-3-wallpaper-u138nlh3irkmsdcm.jpg'); }
+  .img-ghost::before { background-image: url('fotos/Sons.webp'); }
+  .img-ascension::before { background-image: url('fotos/maxresdefault.jpg'); }
+  .img-gow2018::before { background-image: url('fotos/EGS_GodofWar_SantaMonicaStudio_S2_1200x1600-fbdf3cbc2980749091d52751ffabb7b7_1200x1600-fbdf3cbc2980749091d52751ffabb7b7.jfif'); }
+  .img-ragnarok::before { background-image: url('fotos/steel-magnolia-15owu.jpg'); }
+  
+
+  .game-info {
+    padding: 2rem 1.8rem;
+    position: relative;
+    z-index: 2;
+  }
+
+  .game-card::after {
+    content: '';
+    position: absolute;
+    bottom: 0; left: 0; right: 0;
+    height: 2px;
+    background: var(--blood);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.4s ease;
+  }
+
+  .game-card:hover { background: #1e1510; }
+  .game-card:hover::after { transform: scaleX(1); }
+
+  .game-year {
+    font-size: 10px;
+    letter-spacing: 0.35em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .game-title {
+    font-family: 'Cinzel', serif;
+    font-weight: 600;
+    font-size: 15px;
+    color: #fff;
+    margin-bottom: 8px;
+    line-height: 1.3;
+  }
+
+  .game-platform {
+    font-size: 10px;
+    letter-spacing: 0.25em;
+    color: #4a4040;
+    text-transform: uppercase;
+  }
+
+  .game-num {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.8rem;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 42px;
+    color: rgba(139,0,0,0.08);
+    font-weight: 900;
+    line-height: 1;
+    pointer-events: none;
+    user-select: none;
+  }
+
+  /* ─────────── FOOTER ─────────── */
+  footer {
+    text-align: center;
+    padding: 4rem 2rem 3rem;
+    border-top: 1px solid #1a1510;
+    position: relative;
+    overflow: hidden;
+  }
+
+  footer::before {
+    content: 'Ω';
+    position: absolute;
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 300px;
+    color: rgba(139,0,0,0.03);
+    font-family: serif;
+    pointer-events: none;
+    user-select: none;
+    line-height: 1;
+  }
+
+  .footer-omega {
+    font-size: 48px;
+    color: var(--blood);
+    opacity: 0.4;
+    font-family: serif;
+    margin-bottom: 1.2rem;
+    filter: drop-shadow(0 0 12px rgba(139,0,0,0.4));
+  }
+
+  .footer-tagline {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 16px;
+    color: var(--dim);
+    margin-bottom: 1.5rem;
+  }
+
+  .footer-text {
+    font-size: 10px;
+    letter-spacing: 0.4em;
+    color: #3a3028;
+    text-transform: uppercase;
+  }
+
+  /* ─────────── RESPONSIVE ─────────── */
+  @media (max-width: 768px) {
+    .hero-title { font-size: 70px; }
+    .hero-stats { gap: 1.5rem; }
+    .stat-num { font-size: 28px; }
+
+    .hero-stats { gap: 2rem; }
+
+    .lore-grid { grid-template-columns: 1fr; gap: 2rem; }
+
+    .timeline::before { left: 12px; transform: none; }
+    .tl-item { grid-template-columns: 24px 1fr; gap: 1rem; }
+    .tl-left, .tl-right  { display: none; }
+    .tl-item:nth-child(odd) .tl-right,
+    .tl-item:nth-child(even) .tl-left { display: block; opacity: 1; pointer-events: auto; order: 3; }
+    .tl-item:nth-child(odd) .tl-left,
+    .tl-item:nth-child(even) .tl-right { display: none; }
+    .tl-mid { grid-column: 1; order: 1 !important; }
+    .tl-item:nth-child(odd) .tl-right,
+    .tl-item:nth-child(even) .tl-left { grid-column: 2; order: 2 !important; }
+    .tl-item:nth-child(odd) .tl-card,
+    .tl-item:nth-child(even) .tl-card { border-left: 2px solid var(--blood); border-right: none; }
+
+    .quotes-grid { grid-template-columns: 1fr; }
+    .quote-card.featured { grid-column: 1; }
+
+    .games-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .games-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- O Menu agora é gerado apenas pelo script.js para evitar erros -->
+
+<!-- HERO -->
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <div class="hero-atmosphere"></div>
+
+  <div class="hero-content">
+    <p class="eyebrow">O Ghost of Sparta</p>
+    <h1 class="hero-title">KRATOS</h1>
+    <p class="hero-sub">Deus da Guerra &nbsp;·&nbsp; Filho de Zeus &nbsp;·&nbsp; Flagelo do Olimpo</p>
+
+    <div class="divider">
+      <div class="divider-line"></div>
+      <span class="omega-big">Ω</span>
+      <div class="divider-line r"></div>
+    </div>
+
+    <div class="hero-stats">
+      <div class="stat"><span class="stat-num">21+</span><span class="stat-label">Deuses mortos</span></div>
+      <div class="stat"><span class="stat-num">3</span><span class="stat-label">Eras mitológicas</span></div>
+      <div class="stat"><span class="stat-num">9</span><span class="stat-label">Reinos Visitados</span></div>
+      <div class="stat"><span class="stat-num infinity-pulse">∞</span><span class="stat-label">Destinos Alterados</span></div>
+    </div>
+    <a href="quiz.html" style="display: inline-block; margin-top: 1.5rem; padding: 11px 20px; border: 1px solid var(--gold); color: var(--gold-light); text-decoration: none; font-size: 12px; letter-spacing: .12em; text-transform: uppercase; transition: background .2s ease, color .2s ease;">Desafie os Deuses: Quiz</a>
+  </div>
+
+  <div class="scroll-cue">
+    <span>Scroll</span>
+    <svg viewBox="0 0 24 24" fill="none" stroke="#8B0000" stroke-width="2" stroke-linecap="round">
+      <path d="M12 5v14M5 12l7 7 7-7"/>
+    </svg>
+  </div>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<!-- LORE -->
+<section class="section" id="lore">
+  <div class="section-inner">
+    <div class="lore-grid">
+      <div>
+        <p class="section-tag">Origem</p>
+        <h2 class="section-title">Nascido da guerra,<br>forjado pela traição</h2>
+        <p class="lore-body">
+          Kratos foi um general espartano implacável que, em desespero durante uma batalha perdida, vendeu sua alma ao deus da guerra <em>Ares</em>. Em troca de poder ilimitado, tornou-se o Fantasma de Esparta — suas mãos manchadas pelas cinzas de sua própria família.<br><br>
+          Traído, amaldiçoado e consumido por ódio, Kratos percorreu o Olimpo em busca de redenção — ou vingança. Sua jornada o levaria a matar os próprios deuses do panteão grego, antes de encontrar um propósito diferente como pai, nas frias terras da mitologia nórdica.
+        </p>
+      </div>
+      <div>
+        <div class="lore-aside">
+          <p class="lore-aside-title">Ficha do Personagem</p>
+          <div class="lore-attrs">
+            <div class="attr-row"><span class="attr-key">Origem</span><span class="attr-val">Esparta, Grécia</span></div>
+            <div class="attr-row"><span class="attr-key">Pai</span><span class="attr-val">Zeus</span></div>
+            <div class="attr-row"><span class="attr-key">Título</span><span class="attr-val">Deus da Guerra</span></div>
+            <div class="attr-row"><span class="attr-key">Armas</span><span class="attr-val">Lâminas do Caos / Machado Leviatã</span></div>
+            <div class="attr-row"><span class="attr-key">Filho</span><span class="attr-val">Atreus (Loki)</span></div>
+            <div class="attr-row"><span class="attr-key">Criador</span><span class="attr-val">Santa Monica Studio</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TIMELINE -->
+<section class="section timeline-wrap" id="timeline">
+  <div class="section-inner">
+    <div class="tl-center">
+      <p class="section-tag">Jornada</p>
+      <h2 class="section-title">A Saga do Deus da Guerra</h2>
+    </div>
+    <div class="timeline">
+
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-card">
+            <p class="tl-era">Grécia Antiga</p>
+            <p class="tl-name">O Pacto com Ares</p>
+            <p class="tl-desc">General espartano faz pacto com o deus da guerra para sobreviver uma batalha perdida. O preço: a vida de sua família. As cinzas são fundidas à sua pele para sempre.</p>
+          </div>
+        </div>
+        <div class="tl-mid"><div class="tl-dot"></div></div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-left"></div>
+        <div class="tl-mid"><div class="tl-dot" style="background:var(--gold-light); box-shadow: 0 0 14px rgba(218,165,32,0.7);"></div></div>
+        <div class="tl-right">
+          <div class="tl-card">
+            <p class="tl-era">God of War I — 2005</p>
+            <p class="tl-name">A Morte de Ares</p>
+            <p class="tl-desc">Kratos sobe ao Olimpo, derrota Ares e é proclamado o novo Deus da Guerra. Uma vitória vazia — os pesadelos de sua família não o abandonam.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-card">
+            <p class="tl-era">God of War II — 2007</p>
+            <p class="tl-name">Traído por Zeus</p>
+            <p class="tl-desc">Despojado de seus poderes divinos por Zeus e deixado para morrer no Submundo. Kratos retorna com a ajuda das Titãs para um confronto épico com os Fados.</p>
+          </div>
+        </div>
+        <div class="tl-mid"><div class="tl-dot"></div></div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-left"></div>
+        <div class="tl-mid"><div class="tl-dot" style="background:#4a6fa5; box-shadow: 0 0 14px rgba(74,111,165,0.7);"></div></div>
+        <div class="tl-right">
+          <div class="tl-card">
+            <p class="tl-era">God of War III — 2010</p>
+            <p class="tl-name">A Queda do Olimpo</p>
+            <p class="tl-desc">Kratos destrói os próprios deuses olímpicos um a um. O mundo desmorona a cada morte divina. Zeus cai. O ciclo grego chega ao fim sangrento.</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-left">
+          <div class="tl-card">
+            <p class="tl-era">God of War — 2018</p>
+            <p class="tl-name">O Pai e o Filho</p>
+            <p class="tl-desc">Nas frias terras nórdicas, Kratos começa de novo com seu filho Atreus. Uma jornada para espalhar as cinzas da mãe no pico mais alto dos Nove Reinos revela segredos devastadores.</p>
+          </div>
+        </div>
+        <div class="tl-mid"><div class="tl-dot" style="background:#7a9a5a; box-shadow: 0 0 14px rgba(122,154,90,0.7);"></div></div>
+        <div class="tl-right"></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-left"></div>
+        <div class="tl-mid"><div class="tl-dot" style="background:var(--gold-light); box-shadow: 0 0 14px rgba(218,165,32,0.9); width:18px; height:18px;"></div></div>
+        <div class="tl-right">
+          <div class="tl-card" style="border-left:2px solid var(--gold-light);">
+            <p class="tl-era">God of War: Ragnarök — 2022</p>
+            <p class="tl-name">O Fim dos Tempos</p>
+            <p class="tl-desc">O Ragnarök se aproxima. Kratos e Atreus enfrentam Odin e os deuses de Asgard — desta vez, não apenas pela vingança, mas pela esperança de um futuro diferente.</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- QUOTES -->
+<section class="section quotes-wrap" id="quotes">
+  <div class="section-inner">
+    <p class="section-tag">Palavras do Fantasma</p>
+    <h2 class="section-title">Frases Imortais</h2>
+
+    <div class="quotes-grid">
+      <div class="quote-card featured">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">"Eu fui um deus como você, uma vez. E olha o que me tornei."</p>
+        <p class="quote-attr">— Kratos a Baldur · God of War (2018)</p>
+      </div>
+
+      <div class="quote-card">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">"Eu não me arrependo do que sou. Apenas do que me tornei."</p>
+        <p class="quote-attr">— Kratos · God of War III</p>
+      </div>
+
+      <div class="quote-card">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">"Seja melhor, Atreus. Seja melhor que eu."</p>
+        <p class="quote-attr">— Kratos a Atreus · God of War (2018)</p>
+      </div>
+
+      <div class="quote-card">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">"Você não pode mudar o que você é, mas pode escolher o que vai se tornar."</p>
+        <p class="quote-attr">— Kratos · God of War: Ragnarök</p>
+      </div>
+
+      <div class="quote-card">
+        <span class="quote-mark">"</span>
+        <p class="quote-text">"A morte não me aceita. E o Olimpo vai lamentar isso."</p>
+        <p class="quote-attr">— Kratos · God of War II</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- GAMES -->
+<section class="section games-wrap" id="games">
+  <div class="section-inner games-inner">
+    <p class="section-tag">Franquia</p>
+    <h2 class="section-title">Os Jogos</h2>
+
+    <div class="games-grid">
+      <div class="game-card">
+        <div class="game-img-wrapper img-gow1"></div>
+        <div class="game-info">
+          <span class="game-num">I</span>
+          <p class="game-year">2005</p>
+          <p class="game-title">God of War</p>
+          <p class="game-platform">PlayStation 2</p>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="game-img-wrapper img-gow2"></div>
+        <div class="game-info">
+          <span class="game-num">III</span>
+          <p class="game-year">2007</p>
+          <p class="game-title">God of War II</p>
+          <p class="game-platform">PlayStation 2</p>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="game-img-wrapper img-chains"></div>
+        <div class="game-info">
+          <span class="game-num">II</span>
+          <p class="game-year">2007-2010</p>
+          <p class="game-title">Chains of Olympus - Ghost of Sparta</p>
+          <p class="game-platform">PSP · PS3</p>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="game-img-wrapper img-gow3"></div>
+        <div class="game-info">
+          <span class="game-num">IV</span>
+          <p class="game-year">2010</p>
+          <p class="game-title">God of War III</p>
+          <p class="game-platform">PlayStation 3</p>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="game-img-wrapper img-ascension"></div>
+        <div class="game-info">
+          <span class="game-num">VI</span>
+          <p class="game-year">2013</p>
+          <p class="game-title">God of War: Ascension</p>
+          <p class="game-platform">PlayStation 3</p>
+        </div>
+      </div>
+      <div class="game-card">
+        <div class="game-img-wrapper img-gow2018"></div>
+        <div class="game-info">
+          <span class="game-num">VII</span>
+          <p class="game-year">2018</p>
+          <p class="game-title">God of War</p>
+          <p class="game-platform">PS4 · PC</p>
+        </div>
+      </div>
+      <div class="game-card" style="grid-column: 1 / -1; border-left: 2px solid var(--gold);">
+        <div class="game-img-wrapper img-ragnarok" style="height: 350px;"></div>
+        <div class="game-info">
+          <span class="game-num" style="font-size: 60px; opacity: 0.05;">VIII</span>
+          <p class="game-year">2022</p>
+          <p class="game-title">God of War: Ragnarök</p>
+          <p class="game-platform">PS4 · PS5 · PC</p>
+          <div class="game-card">
+        <div class="game-img-wrapper img-ghost"></div>
+        <div class="game-info">
+          <span class="game-num">V</span>
+          <p class="game-year">2025</p>
+          <p class="game-title">Sons of Sparta</p>
+          <p class="game-platform">PS5</p>
+        </div>
+      </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"A morte não é o fim para alguém como eu."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio &nbsp;·&nbsp; Sony Interactive Entertainment</p>
+</footer>
+
+<script>
+  // Ember particles
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#A52020','#CD5C5C','#B8860B','#FF6600','#FF4500'];
+  for (let i = 0; i < 70; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 4 + 1.2;
+    const dur  = (Math.random() * 7 + 4).toFixed(1);
+    const del  = (Math.random() * 8).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 100).toFixed(0);
+    s.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom:${(Math.random() * 20).toFixed(1)}%;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s;
+      animation-delay:${del}s;
+      --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

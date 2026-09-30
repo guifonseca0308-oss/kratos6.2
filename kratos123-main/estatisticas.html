@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ESTATÍSTICAS — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="fotos/omega.png">
+<style>
+  .hero {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(184,134,11,0.15) 0%, transparent 70%), var(--dark);
+    border-bottom: 4px double var(--gold);
+    text-align: center;
+  }
+
+  .hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(32px, 6vw, 64px); color: #fff; text-shadow: 0 0 20px var(--gold); }
+
+  .section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  /* Atributos Style */
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 5rem;
+  }
+
+  .stat-card {
+    background: var(--dark2);
+    border: 1px solid var(--stone);
+    padding: 2rem;
+    border-top: 3px solid var(--gold);
+    text-align: center;
+  }
+
+  .stat-val { font-family: 'Cinzel Decorative', serif; font-size: 32px; color: var(--gold-light); display: block; margin-bottom: 0.5rem; }
+  .stat-name { font-size: 12px; text-transform: uppercase; letter-spacing: 0.2em; color: var(--muted); }
+
+  /* Progress Bars */
+  .attr-container { margin-top: 4rem; }
+  .attr-row { margin-bottom: 2rem; }
+  .attr-info { display: flex; justify-content: space-between; margin-bottom: 0.8rem; font-family: 'Cinzel', serif; font-size: 14px; color: var(--ash); }
+  .bar-bg { background: var(--dark3); height: 8px; border-radius: 4px; overflow: hidden; border: 1px solid #332211; }
+  .bar-fill { height: 100%; background: linear-gradient(90deg, var(--blood), var(--gold)); width: 0; transition: width 1.5s ease-out; }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Registros de Guerra</p>
+  <h1 class="hero-title">ESTATÍSTICAS</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    
+    <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin-bottom: 3rem; text-align: center;">Seu Progresso</h2>
+    <div class="stats-grid">
+      <div class="stat-card" style="border-top-color: var(--blood);">
+        <span class="stat-val">25h</span>
+        <span class="stat-name">Tempo de Jogo</span>
+      </div>
+      <div class="stat-card" style="border-top-color: var(--blood);">
+        <span class="stat-val">3.245</span>
+        <span class="stat-name">Inimigos Derrotados</span>
+      </div>
+      <div class="stat-card" style="border-top-color: var(--blood);">
+        <span class="stat-val">82%</span>
+        <span class="stat-name">Progresso de Platina</span>
+      </div>
+      <div class="stat-card" style="border-top-color: var(--blood);">
+        <span class="stat-val">48.000</span>
+        <span class="stat-name">💰 Hacksilver</span>
+      </div>
+    </div>
+
+    <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin-bottom: 3rem; text-align: center;">Registros Mundiais</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-val">21+</span>
+        <span class="stat-name">Deuses Executados</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">9</span>
+        <span class="stat-name">Reinos Explorados</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">32%</span>
+        <span class="stat-name">Taxa de Platina Global</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">150M+</span>
+        <span class="stat-name">Cópias Vendidas</span>
+      </div>
+    </div>
+
+    <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin: 5rem 0 3rem; text-align: center;">Frequência de Chefes Principais</h2>
+    <div class="stats-grid">
+      <div class="stat-card">
+        <span class="stat-val">5</span>
+        <span class="stat-name">Zeus (Encontros Totais)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">3</span>
+        <span class="stat-name">Baldur (Duelos)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">2</span>
+        <span class="stat-name">Thor (Batalhas Épicas)</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">1</span>
+        <span class="stat-name">Odin (Confronto Final)</span>
+      </div>
+    </div>
+
+    <div class="attr-container">
+      <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin-bottom: 3rem; text-align: center;">Arsenal: Preferência dos Jogadores</h2>
+      
+      <div class="attr-row">
+        <div class="attr-info"><span>LÂMINAS DO CAOS (Saga Completa)</span><span>48%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 48%;"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>MACHADO LEVIATÃ (Era Nórdica)</span><span>37%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 37%;"></div></div>
+      </div>
+      <div class="attr-row">
+        <div class="attr-info"><span>LANÇA DRAUPNIR (GoW Ragnarök)</span><span>15%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 15%;"></div></div>
+      </div>
+    </div>
+
+    <div class="attr-container">
+      <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin-bottom: 3rem; text-align: center;">Atributos do Fantasma de Esparta</h2>
+      
+      <div class="attr-row">
+        <div class="attr-info"><span>FORÇA</span><span>MAX</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 100%;"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>RÚNICO</span><span>85%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 85%;"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>DEFESA</span><span>92%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 92%;"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>SORTE</span><span>15%</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 15%;"></div></div>
+      </div>
+    </div>
+
+    <div class="attr-container">
+      <h2 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); margin-bottom: 3rem; text-align: center;">Comparativo de Dificuldade (Curva de Platina)</h2>
+      
+      <div class="attr-row">
+        <div class="attr-info"><span>ERA GREGA (GOW III)</span><span>IMPLACÁVEL</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 95%; background: var(--blood);"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>ERA NÓRDICA (GOW 2018)</span><span>DESAFIADORA</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 75%; background: var(--gold);"></div></div>
+      </div>
+
+      <div class="attr-row">
+        <div class="attr-info"><span>VALHALLA (RAGNARÖK)</span><span>TÁTICA</span></div>
+        <div class="bar-bg"><div class="bar-fill" style="width: 82%; background: var(--gold-light);"></div></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"Os números não mentem, apenas os homens."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#B8860B','#FF4500'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0; background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s; animation-delay:${del}s; --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

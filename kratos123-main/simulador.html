@@ -1,0 +1,501 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SIMULADOR DE BATALHA — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<style>
+  .hero {
+    min-height: 50vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(139,0,0,0.2) 0%, transparent 70%), var(--dark);
+    border-bottom: 4px double var(--gold);
+    text-align: center;
+  }
+  .hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(32px, 6vw, 64px); color: #fff; text-shadow: 0 0 20px var(--blood); }
+
+  .simulator-container {
+    max-width: 1000px;
+    margin: 4rem auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    align-items: center;
+  }
+
+  .battle-grid {
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
+    gap: 2rem;
+    align-items: center;
+    width: 100%;
+  }
+
+  .fighter-card {
+    background: var(--dark2);
+    border: 2px solid var(--stone);
+    padding: 2rem;
+    text-align: center;
+    transition: 0.3s;
+  }
+  .fighter-card.active-fighter { border-color: var(--gold); box-shadow: 0 0 20px rgba(184, 134, 11, 0.2); }
+
+  .fighter-select {
+    width: 100%;
+    padding: 1rem;
+    background: var(--dark3);
+    border: 1px solid var(--stone);
+    color: var(--ash);
+    font-family: 'Cinzel', serif;
+    margin-top: 1rem;
+    cursor: pointer;
+  }
+
+  .vs-badge {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 48px;
+    color: var(--blood);
+    text-shadow: 0 0 15px var(--blood);
+  }
+
+  .battle-btn {
+    background: var(--blood);
+    color: #fff;
+    border: none;
+    padding: 1.2rem 3rem;
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 20px;
+    cursor: pointer;
+    transition: 0.3s;
+    letter-spacing: 2px;
+    border: 1px solid transparent;
+  }
+  .battle-btn:hover {
+    background: #a00000;
+    box-shadow: 0 0 30px var(--blood);
+    transform: scale(1.05);
+  }
+
+  #battle-result {
+    width: 100%;
+    padding: 2rem;
+    background: var(--dark2);
+    border-left: 4px solid var(--gold);
+    font-family: 'IM Fell English', serif;
+    font-size: 18px;
+    line-height: 1.6;
+    display: none;
+    animation: fadeIn 0.5s ease;
+  }
+
+  /* Estilos da Barra de Vida */
+  .health-bar-container {
+    width: 100%;
+    height: 12px;
+    background: #111;
+    border: 1px solid var(--stone);
+    margin: 1.5rem 0 0.5rem;
+    position: relative;
+    box-shadow: inset 0 0 5px #000;
+  }
+  .health-bar-fill {
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, var(--blood), #ff4500);
+    transition: width 1.5s cubic-bezier(0.1, 0.7, 0.1, 1);
+  }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  @media (max-width: 768px) {
+    .battle-grid { grid-template-columns: 1fr; }
+    .vs-badge { margin: 1rem 0; }
+  }
+
+  .simulator-container { max-width: 1160px; gap: 2rem; padding: 2rem 1.5rem 4rem; }
+  .battle-grid { gap: 1.25rem; }
+  .fighter-card { min-width: 0; border-width: 1px; border-top: 3px solid var(--blood); padding: 1.5rem; }
+  .fighter-card h2 { color: var(--gold-light); font: 600 15px 'Cinzel', serif; }
+  .fighter-select { margin-top: .65rem; padding: .8rem; font-size: 13px; }
+  .field-label { display: block; margin-top: 1.2rem; color: var(--muted); font-size: 10px; letter-spacing: .13em; text-align: left; text-transform: uppercase; }
+  .fighter-mark { display: grid; place-items: center; width: 64px; aspect-ratio: 1; margin: 0 auto 1rem; border: 1px solid var(--gold); color: var(--gold-light); font: 28px 'Cinzel Decorative', serif; background: radial-gradient(circle, rgba(139,0,0,.3), transparent 70%); }
+  .vs-badge { color: var(--embers); font-size: 30px; }
+  .difficulty-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 12px; width: 100%; }
+  .difficulty-row label { color: var(--muted); font-size: 11px; letter-spacing: .14em; text-transform: uppercase; }
+  .difficulty-select { min-width: 220px; padding: 10px 14px; border: 1px solid var(--stone); background: var(--dark2); color: var(--ash); font: 13px 'Cinzel', serif; }
+  .difficulty-note { flex-basis: 100%; margin: 0; color: var(--dim); font: 15px 'IM Fell English', serif; text-align: center; }
+  #probability-display { margin: 0 !important; font: 600 13px 'Cinzel', serif !important; text-align: center; letter-spacing: .08em; }
+  .battle-btn { min-height: 52px; padding: 13px 30px; font: 700 13px 'Cinzel', serif; letter-spacing: .13em; }
+  .battle-btn:disabled { opacity: .5; cursor: wait; transform: none; }
+  .sim-status { min-height: 22px; margin: -1.25rem 0 0; color: var(--embers); font: 15px 'IM Fell English', serif; text-align: center; }
+  .arena { position: relative; display: grid; grid-template-columns: minmax(0,1fr) 90px minmax(0,1fr); align-items: center; gap: 16px; width: 100%; min-height: 300px; overflow: hidden; padding: 26px; border: 1px solid var(--stone); background: radial-gradient(ellipse at 50% 110%, rgba(139,0,0,.22), transparent 62%), linear-gradient(180deg, rgba(26,20,16,.7), rgba(13,11,9,.95)); }
+  .arena::before { position: absolute; right: 8%; bottom: 27px; left: 8%; height: 1px; background: linear-gradient(90deg, transparent, var(--gold), var(--blood), transparent); content: ''; }
+  .arena-fighter { position: relative; z-index: 1; text-align: center; }
+  .arena-mark { display: grid; place-items: center; width: 108px; aspect-ratio: 1; margin: 0 auto 14px; border: 1px solid rgba(218,165,32,.55); background: radial-gradient(circle, rgba(139,0,0,.42), rgba(13,11,9,.3) 68%); color: #fff; font: 44px 'Cinzel Decorative', serif; text-shadow: 0 0 22px var(--embers); }
+  .arena-fighter h2 { margin: 0; color: #fff; font: 600 16px 'Cinzel', serif; }
+  .arena-weapon { min-height: 20px; margin: 5px 0 0; color: var(--gold-light); font: 14px 'IM Fell English', serif; }
+  .arena-health { width: 100%; max-width: 260px; height: 10px; margin: 14px auto 0; border: 1px solid var(--stone); background: #090807; }
+  .arena-health-fill { width: 100%; height: 100%; background: linear-gradient(90deg, #7b1712, #d79736); transition: width .55s ease; }
+  .arena-health-label { display: block; margin-top: 5px; color: var(--muted); font: 10px 'Cinzel', serif; }
+  .arena-vs { color: var(--embers); font: 700 19px 'Cinzel Decorative', serif; text-align: center; text-shadow: 0 0 12px var(--blood); }
+  .arena-fighter.is-attacking .arena-mark { animation: lunge .48s ease-in-out; }
+  .arena-fighter.is-hit .arena-mark { animation: hit .32s ease-in-out; }
+  .arena-log { grid-column: 1 / -1; z-index: 1; min-height: 28px; margin: 0; color: var(--ash); font: 16px 'IM Fell English', serif; text-align: center; }
+  #battle-result { display: block; }
+  .battle-result { width: 100%; padding: 22px; border-left: 3px solid var(--gold); background: var(--dark2); animation: fadeIn .4s ease; }
+  .battle-result h2 { margin-bottom: 8px; color: var(--gold-light); font: 700 19px 'Cinzel Decorative', serif; }
+  .battle-result p { color: var(--ash); font: 17px/1.55 'IM Fell English', serif; }
+  .battle-result .result-detail { margin-top: 8px; color: var(--muted); font-size: 14px; }
+  [hidden] { display: none !important; }
+  @keyframes lunge { 50% { transform: translateX(var(--lunge, 18px)) scale(1.08); filter: brightness(1.5); } }
+  @keyframes hit { 25% { transform: translateX(-8px); filter: brightness(1.8); } 75% { transform: translateX(7px); } }
+  @media (max-width: 768px) {
+    .battle-grid { grid-template-columns: minmax(0, 1fr) 42px minmax(0, 1fr); gap: 8px; }
+    .fighter-card { padding: 1rem .7rem; }
+    .fighter-card h2 { font-size: 12px; }
+    .fighter-select { padding: .65rem .4rem; font-size: 11px; }
+    .fighter-mark { width: 46px; font-size: 21px; }
+    .vs-badge { margin: 0; font-size: 20px; }
+    .arena { grid-template-columns: minmax(0,1fr) 38px minmax(0,1fr); gap: 6px; min-height: 245px; padding: 18px 10px; }
+    .arena-mark { width: 68px; font-size: 30px; }
+    .arena-fighter h2 { font-size: 12px; }
+    .arena-vs { font-size: 13px; }
+    .arena-log { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Confronto de Divindades</p>
+  <h1 class="hero-title">SIMULADOR DE BATALHA</h1>
+</section>
+
+<div class="simulator-container">
+  <div class="battle-grid">
+    <div class="fighter-card">
+      <div class="fighter-mark" aria-hidden="true">Ω</div>
+      <h2>COMBATENTE I</h2>
+      <label class="field-label" for="fighter-one">Personagem</label>
+      <select id="fighter-one" class="fighter-select"></select>
+      <label class="field-label" for="weapon-one">Arma</label>
+      <select id="weapon-one" class="fighter-select"></select>
+    </div>
+    <div class="vs-badge" aria-hidden="true">VS</div>
+    <div class="fighter-card">
+      <div class="fighter-mark" aria-hidden="true">ᚦ</div>
+      <h2>COMBATENTE II</h2>
+      <label class="field-label" for="fighter-two">Personagem</label>
+      <select id="fighter-two" class="fighter-select"></select>
+      <label class="field-label" for="weapon-two">Arma</label>
+      <select id="weapon-two" class="fighter-select"></select>
+    </div>
+  </div>
+
+  <div class="difficulty-row">
+    <label for="difficulty">Dificuldade</label>
+    <select id="difficulty" class="difficulty-select">
+      <option value="easy">Mortal</option>
+      <option value="normal" selected>Deus da Guerra</option>
+      <option value="hard">Impossível</option>
+    </select>
+    <p class="difficulty-note" id="difficulty-note">Combate equilibrado, decidido pelos atributos e equipamentos.</p>
+  </div>
+
+  <div id="probability-display">CHANCE DO COMBATENTE I: <span id="win-pct">--%</span></div>
+  <p class="sim-status" id="sim-status" role="status"></p>
+  <button class="battle-btn" id="start-battle" type="button">INICIAR CONFRONTO</button>
+
+  <section class="arena" id="battle-arena" aria-label="Arena de batalha" hidden>
+    <div class="arena-fighter" id="arena-fighter-one">
+      <div class="arena-mark" id="arena-mark-one" aria-hidden="true"></div>
+      <h2 id="arena-name-one"></h2>
+      <p class="arena-weapon" id="arena-weapon-one"></p>
+      <div class="arena-health"><div class="arena-health-fill" id="health-one"></div></div>
+      <span class="arena-health-label" id="health-label-one">100%</span>
+    </div>
+    <div class="arena-vs" aria-hidden="true">VS</div>
+    <div class="arena-fighter" id="arena-fighter-two">
+      <div class="arena-mark" id="arena-mark-two" aria-hidden="true"></div>
+      <h2 id="arena-name-two"></h2>
+      <p class="arena-weapon" id="arena-weapon-two"></p>
+      <div class="arena-health"><div class="arena-health-fill" id="health-two"></div></div>
+      <span class="arena-health-label" id="health-label-two">100%</span>
+    </div>
+    <p class="arena-log" id="arena-log" aria-live="polite">Os combatentes se encaram.</p>
+  </section>
+
+  <div id="battle-result" class="battle-result" role="status" hidden></div>
+
+  <div id="achievements-section" style="margin-top: 3rem; width: 100%; display: none; border-top: 1px solid var(--stone); padding-top: 2rem;">
+    <h3 style="font-family: 'Cinzel Decorative', serif; color: var(--gold); text-align: center; margin-bottom: 2rem; letter-spacing: 2px;">HALL DOS IMORTAIS: VITÓRIAS IMPECÁVEIS</h3>
+    <div id="achievements-list" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 1.5rem;"></div>
+  </div>
+</div>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"O destino é o que fazemos dele."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#B8860B','#FF4500'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0; background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s; animation-delay:${del}s; --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+<script>
+  const characters = {
+    young: { name: 'Kratos Jovem', power: 88, mark: 'Ω' },
+    old: { name: 'Kratos Nórdico', power: 94, mark: 'Ω' },
+    zeus: { name: 'Zeus', power: 91, mark: 'Ζ' },
+    thor: { name: 'Thor', power: 90, mark: 'ᚦ' },
+    baldur: { name: 'Baldur', power: 82, mark: 'ᛒ' },
+    odin: { name: 'Odin', power: 92, mark: 'ᛟ' },
+    ares: { name: 'Ares', power: 87, mark: 'Α' },
+    hades: { name: 'Hades', power: 86, mark: 'Η' },
+    poseidon: { name: 'Poseidon', power: 88, mark: 'Ψ' },
+    heimdall: { name: 'Heimdall', power: 85, mark: 'ᚺ' },
+    sigrun: { name: 'Sigrun', power: 89, mark: 'ᛉ' },
+    hermes: { name: 'Hermes', power: 80, mark: 'Η' },
+    cronos: { name: 'Cronos', power: 93, mark: 'Κ' },
+    jormungandr: { name: 'Jörmungandr', power: 95, mark: 'ᛃ' },
+    hydra: { name: 'Hidra', power: 78, mark: 'Δ' },
+    garm: { name: 'Garm', power: 84, mark: 'ᚷ' },
+    nidhogg: { name: 'Nidhogg', power: 91, mark: 'ᚾ' }
+  };
+  const weapons = {
+    blades: { name: 'Lâminas do Caos', power: 8 },
+    axe: { name: 'Machado Leviatã', power: 9 },
+    spear: { name: 'Lança Draupnir', power: 8 },
+    olympus: { name: 'Lâmina do Olimpo', power: 10 },
+    mjolnir: { name: 'Mjölnir', power: 9 }
+  };
+  const difficultySettings = {
+    easy: { bias: 12, rivalDamage: 0, note: 'Mortal: o Combatente I recebe uma pequena vantagem.' },
+    normal: { bias: 0, rivalDamage: 3, note: 'Deus da Guerra: combate equilibrado, decidido pelos atributos e equipamentos.' },
+    hard: { bias: -12, rivalDamage: 6, note: 'Impossível: o Combatente II recebe mais pressão durante a luta.' }
+  };
+  const fighterOne = document.getElementById('fighter-one');
+  const fighterTwo = document.getElementById('fighter-two');
+  const weaponOne = document.getElementById('weapon-one');
+  const weaponTwo = document.getElementById('weapon-two');
+  const difficulty = document.getElementById('difficulty');
+  const winPct = document.getElementById('win-pct');
+  const startButton = document.getElementById('start-battle');
+  const simStatus = document.getElementById('sim-status');
+  const arena = document.getElementById('battle-arena');
+  const resultArea = document.getElementById('battle-result');
+  const achievementsSection = document.getElementById('achievements-section');
+  const achievementsList = document.getElementById('achievements-list');
+
+  function fillSelect(select, items) {
+    Object.entries(items).forEach(([value, item]) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = item.name;
+      select.append(option);
+    });
+  }
+
+  function updateOdds() {
+    const sameFighter = fighterOne.value === fighterTwo.value;
+    simStatus.textContent = sameFighter ? 'Escolha dois personagens diferentes para iniciar a batalha.' : '';
+    startButton.disabled = sameFighter;
+    if (sameFighter) {
+      winPct.textContent = '--%';
+      return 50;
+    }
+    const fighterDifference = characters[fighterOne.value].power - characters[fighterTwo.value].power;
+    const weaponDifference = weapons[weaponOne.value].power - weapons[weaponTwo.value].power;
+    const odds = Math.max(12, Math.min(88, Math.round(50 + fighterDifference * 0.75 + weaponDifference * 1.5 + difficultySettings[difficulty.value].bias)));
+    winPct.textContent = `${odds}%`;
+    winPct.style.color = odds >= 60 ? 'var(--gold-light)' : odds <= 40 ? 'var(--embers)' : '#fff';
+    document.getElementById('difficulty-note').textContent = difficultySettings[difficulty.value].note;
+    return odds;
+  }
+
+  function getAchievements() {
+    try { return JSON.parse(localStorage.getItem('kratos_battle_achievements') || '[]'); }
+    catch { return []; }
+  }
+
+  function renderAchievements() {
+    const achievements = getAchievements();
+    achievementsSection.style.display = achievements.length ? 'block' : 'none';
+    achievementsList.replaceChildren();
+    achievements.forEach(achievement => {
+      const card = document.createElement('div');
+      card.className = 'fighter-card';
+      card.style.cssText = 'padding:1.5rem;border-color:var(--gold);position:relative';
+      const date = document.createElement('div');
+      date.textContent = achievement.date || '';
+      date.style.cssText = 'font-size:9px;color:var(--gold);text-align:right';
+      const matchup = document.createElement('p');
+      matchup.textContent = `${achievement.kratos || 'Combatente'} venceu ${achievement.god || 'o rival'}`;
+      matchup.style.cssText = 'margin:12px 0;color:var(--gold-light);font-family:Cinzel,serif';
+      const weapon = document.createElement('p');
+      weapon.textContent = `Vitória impecável com ${achievement.weapon || 'sua arma'}`;
+      weapon.style.cssText = 'color:var(--muted);font:15px "IM Fell English",serif';
+      card.append(date, matchup, weapon);
+      achievementsList.append(card);
+    });
+  }
+
+  function saveAchievement(winner, rival, weapon) {
+    const achievements = getAchievements();
+    const id = `${winner}_${rival}_${weapon}`;
+    if (achievements.some(achievement => achievement.id === id)) return;
+    achievements.push({
+      id,
+      kratos: characters[winner].name,
+      god: characters[rival].name,
+      weapon: weapons[weapon].name,
+      date: new Date().toLocaleDateString('pt-BR')
+    });
+    try { localStorage.setItem('kratos_battle_achievements', JSON.stringify(achievements)); }
+    catch { return; }
+    renderAchievements();
+  }
+
+  function updateHealth(side, health) {
+    document.getElementById(`health-${side}`).style.width = `${health}%`;
+    document.getElementById(`health-label-${side}`).textContent = `${Math.round(health)}%`;
+  }
+
+  function animateAttack(attacker, hit) {
+    const defender = attacker === 1 ? 2 : 1;
+    const attackerElement = document.getElementById(`arena-fighter-${attacker === 1 ? 'one' : 'two'}`);
+    const defenderElement = document.getElementById(`arena-fighter-${defender === 1 ? 'one' : 'two'}`);
+    attackerElement.style.setProperty('--lunge', attacker === 1 ? '22px' : '-22px');
+    attackerElement.classList.remove('is-attacking');
+    defenderElement.classList.remove('is-hit');
+    void attackerElement.offsetWidth;
+    attackerElement.classList.add('is-attacking');
+    if (hit) defenderElement.classList.add('is-hit');
+    setTimeout(() => {
+      attackerElement.classList.remove('is-attacking');
+      defenderElement.classList.remove('is-hit');
+    }, 500);
+  }
+
+  function pause(milliseconds) {
+    return new Promise(resolve => setTimeout(resolve, milliseconds));
+  }
+
+  async function runBattle() {
+    const firstId = fighterOne.value;
+    const secondId = fighterTwo.value;
+    const firstWeapon = weaponOne.value;
+    const secondWeapon = weaponTwo.value;
+    const first = characters[firstId];
+    const second = characters[secondId];
+    const firstOdds = updateOdds();
+    const settings = difficultySettings[difficulty.value];
+    let firstHealth = 100;
+    let secondHealth = 100;
+    let landedHits = 0;
+    startButton.disabled = true;
+    resultArea.hidden = true;
+    arena.hidden = false;
+    simStatus.textContent = '';
+    document.getElementById('arena-name-one').textContent = first.name;
+    document.getElementById('arena-name-two').textContent = second.name;
+    document.getElementById('arena-mark-one').textContent = first.mark;
+    document.getElementById('arena-mark-two').textContent = second.mark;
+    document.getElementById('arena-weapon-one').textContent = weapons[firstWeapon].name;
+    document.getElementById('arena-weapon-two').textContent = weapons[secondWeapon].name;
+    updateHealth('one', firstHealth);
+    updateHealth('two', secondHealth);
+    document.getElementById('arena-log').textContent = `${first.name} e ${second.name} se encaram na arena.`;
+    await pause(650);
+
+    for (let turn = 0; turn < 10 && firstHealth > 0 && secondHealth > 0; turn += 1) {
+      const attacker = Math.random() * 100 < firstOdds ? 1 : 2;
+      const hit = Math.random() < 0.9;
+      const attackerName = attacker === 1 ? first.name : second.name;
+      const attackerWeapon = attacker === 1 ? weapons[firstWeapon] : weapons[secondWeapon];
+      animateAttack(attacker, hit);
+      if (hit) {
+        const damageBonus = attacker === 2 ? settings.rivalDamage : 0;
+        const damage = Math.round(12 + Math.random() * 8 + attackerWeapon.power * 0.7 + damageBonus);
+        if (attacker === 1) {
+          secondHealth = Math.max(0, secondHealth - damage);
+          updateHealth('two', secondHealth);
+        } else {
+          firstHealth = Math.max(0, firstHealth - damage);
+          updateHealth('one', firstHealth);
+        }
+        landedHits += 1;
+        document.getElementById('arena-log').textContent = `${attackerName} ataca com ${attackerWeapon.name} e causa ${damage} de dano.`;
+      } else {
+        document.getElementById('arena-log').textContent = `${attackerName} erra o golpe. O rival escapa por pouco.`;
+      }
+      await pause(650);
+    }
+
+    const firstWins = firstHealth === secondHealth ? Math.random() * 100 < firstOdds : firstHealth > secondHealth;
+    const winner = firstWins ? first : second;
+    const winnerHealth = Math.round(firstWins ? firstHealth : secondHealth);
+    document.getElementById('arena-log').textContent = `${winner.name} permanece de pé. A batalha terminou.`;
+    const heading = document.createElement('h2');
+    heading.textContent = `Vitória de ${winner.name}`;
+    const summary = document.createElement('p');
+    summary.textContent = `${winner.name} vence o confronto na dificuldade ${difficulty.options[difficulty.selectedIndex].textContent}.`;
+    const detail = document.createElement('p');
+    detail.className = 'result-detail';
+    detail.textContent = `Vida restante: ${winnerHealth}% · Golpes certeiros: ${landedHits} · ${first.name}: ${weapons[firstWeapon].name} · ${second.name}: ${weapons[secondWeapon].name}.`;
+    resultArea.replaceChildren(heading, summary, detail);
+    resultArea.hidden = false;
+    const matchup = [firstId, secondId].sort().join(':');
+    window.awardGodOfWarProgress?.({ id: `battle:${difficulty.value}:${matchup}`, xp: 20, medal: 'battle-tested', relic: 'battle-relic', stat: 'battles' });
+    if (firstWins && winnerHealth >= 75) saveAchievement(firstId, secondId, firstWeapon);
+    startButton.disabled = false;
+    startButton.textContent = 'NOVO CONFRONTO';
+    if (typeof triggerRageEffect === 'function') triggerRageEffect();
+  }
+
+  fillSelect(fighterOne, characters);
+  fillSelect(fighterTwo, characters);
+  fillSelect(weaponOne, weapons);
+  fillSelect(weaponTwo, weapons);
+  fighterOne.value = 'young';
+  fighterTwo.value = 'zeus';
+  weaponOne.value = 'blades';
+  weaponTwo.value = 'olympus';
+  [fighterOne, fighterTwo, weaponOne, weaponTwo, difficulty].forEach(select => select.addEventListener('change', updateOdds));
+  startButton.addEventListener('click', runBattle);
+  updateOdds();
+  renderAchievements();
+</script>
+</body>
+</html>

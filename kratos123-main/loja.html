@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LOJA — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png">
+<style>
+  /* MESMOS ESTILOS DA INDEX PARA MANTER A IDENTIDADE */
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blood:      #8B0000;
+    --embers:     #C0392B;
+    --gold:       #B8860B;
+    --gold-light: #DAA520;
+    --ash:        #D4CFC8;
+    --dark:       #0D0B09;
+    --dark2:      #1A1410;
+    --dark3:      #251E17;
+    --stone:      #3A3028;
+    --muted:      #9a8a7a;
+    --dim:        #7a6a60;
+  }
+
+  body {
+    background: var(--dark);
+    color: var(--ash);
+    font-family: 'Cinzel', serif;
+    overflow-x: hidden;
+  }
+
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: linear-gradient(to bottom, rgba(13,11,9,0.95), transparent);
+    backdrop-filter: blur(4px);
+  }
+
+  .nav-toggle { display: none; }
+  .nav-toggle-label {
+    display: block; cursor: pointer; padding: 10px;
+    z-index: 101;
+    order: 1;
+  }
+  .nav-toggle-label span, .nav-toggle-label span::before, .nav-toggle-label span::after {
+    display: block;
+    background: var(--gold);
+    height: 2px;
+    width: 25px;
+    position: relative;
+    transition: 0.3s;
+  }
+  .nav-toggle-label span::before { content: ''; position: absolute; top: 8px; }
+  .nav-toggle-label span::after { content: ''; position: absolute; bottom: 8px; }
+  
+  .nav-omega {
+    font-size: 22px;
+    color: var(--blood);
+    font-family: serif;
+    order: 3;
+  }
+
+  .nav-logo {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 26px;
+    color: var(--gold);
+    letter-spacing: 0.15em;
+    text-decoration: none;
+    order: 2;
+  }
+
+  .nav-links {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: var(--dark2);
+    display: flex;
+    flex-direction: column;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-20px);
+    transform-origin: top;
+    transition: transform 0.4s ease, opacity 0.4s ease, visibility 0.4s;
+    z-index: 99;
+    border-bottom: 2px solid var(--gold);
+    list-style: none;
+  }
+
+  .nav-links li { width: 100%; text-align: center; border-bottom: 1px solid var(--stone); }
+
+  .nav-links a {
+    display: block;
+    padding: 1.2rem;
+    font-size: 14px;
+    letter-spacing: 0.3em;
+    color: #6a5a50;
+    text-decoration: none;
+    text-transform: uppercase;
+    transition: color 0.3s;
+  }
+
+  .nav-links a:hover { color: var(--gold); }
+
+  .nav-toggle:checked ~ .nav-links { 
+    transform: translateY(0); 
+    opacity: 1; 
+    visibility: visible; 
+  }
+  
+  .nav-toggle:checked ~ .nav-toggle-label span { background: transparent; }
+  .nav-toggle:checked ~ .nav-toggle-label span::before { transform: rotate(45deg); top: 0; }
+  .nav-toggle:checked ~ .nav-toggle-label span::after { transform: rotate(-45deg); bottom: 0; }
+
+  /* HERO DA LOJA */
+  .hero {
+    min-height: 60vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 70%, rgba(90,10,10,0.4) 0%, transparent 70%), #0D0B09;
+    border-bottom: 6px double var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    color: #fff;
+    text-shadow: 0 0 30px rgba(139,0,0,0.9);
+    text-align: center;
+  }
+
+  /* GRID DE PRODUTOS */
+  .section { padding: 4rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  
+  .shop-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .product-card {
+    background: var(--dark2);
+    border: 1px solid #2a2018;
+    padding: 1.5rem;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .product-card:hover {
+    border-color: var(--gold);
+    transform: translateY(-5px);
+    background: var(--dark3);
+  }
+
+  .product-img {
+    width: 100%;
+    height: 350px;
+    background: #111;
+    border: 1px solid #332211;
+    overflow: hidden;
+    position: relative;
+  }
+
+  .product-img::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s cubic-bezier(0.165, 0.84, 0.44, 1), filter 0.6s;
+    filter: brightness(0.8) sepia(0.2);
+  }
+
+  .product-card:hover .product-img::before {
+    transform: scale(1.1);
+    filter: brightness(1) sepia(0);
+  }
+
+  /* IMAGENS DOS PRODUTOS VIA CSS */
+  .img-gow1::before { background-image: url('fotos/MV5BZTc2YzQ4NDMtYWM0OS00M2RlLWI2YjktODVkNjgxZGFlYmQyXkEyXkFqcGc@._V1_.jpg'); }
+  .img-gow2::before { background-image: url('fotos/god-of-war-2-button-1641590949211.webp'); }
+  .img-gow3::before { background-image: url('fotos/god-of-war-3-wallpaper-u138nlh3irkmsdcm.jpg'); }
+  .img-ragnarok::before { background-image: url('fotos/steel-magnolia-15owu.jpg'); }
+  .img-gow2018::before { background-image: url('fotos/EGS_GodofWar_SantaMonicaStudio_S2_1200x1600-fbdf3cbc2980749091d52751ffabb7b7_1200x1600-fbdf3cbc2980749091d52751ffabb7b7.jfif'); }
+  .img-ascension::before { background-image: url('fotos/maxresdefault.jpg'); }
+  .img-chains::before { background-image: url('fotos/y3wf1irdsg6c1.jpeg'); }
+  .img-ghost::before { background-image: url('fotos/Sons.webp'); }
+
+  .product-title {
+    font-size: 18px;
+    color: #fff;
+    font-weight: 600;
+  }
+
+  .product-price {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 22px;
+    color: var(--gold-light);
+  }
+
+  .buy-btn {
+    background: var(--blood);
+    color: #fff;
+    border: none;
+    padding: 1rem;
+    font-family: 'Cinzel', serif;
+    font-weight: bold;
+    letter-spacing: 0.2em;
+    cursor: pointer;
+    transition: background 0.3s;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  .buy-btn:hover {
+    background: #a00000;
+    box-shadow: 0 0 15px rgba(139,0,0,0.5);
+  }
+
+  /* ESTILO DAS BRASAS */
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-70vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid #1a1510; }
+  .footer-omega { font-size: 48px; color: var(--blood); opacity: 0.4; margin-bottom: 1rem; }
+
+  /* RESPONSIVIDADE */
+  @media (max-width: 768px) {
+    .hero-title { font-size: 45px; }
+    .shop-grid { grid-template-columns: 1fr; }
+    .product-img { height: 300px; }
+    .section { padding: 2rem 1rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- O Menu agora é gerado apenas pelo script.js para evitar erros -->
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Arsenal do Olimpo</p>
+  <h1 class="hero-title">LOJA OFICIAL</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="shop-grid">
+      
+      <!-- Jogo 1 -->
+      <div class="product-card">
+        <div class="product-img img-gow1"></div>
+        <p class="product-title">God of War - Clássico</p>
+        <p class="product-price">R$ 49,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo 2 -->
+      <div class="product-card">
+        <div class="product-img img-gow2"></div>
+        <p class="product-title">God of War II</p>
+        <p class="product-price">R$ 49,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo 3 -->
+      <div class="product-card">
+        <div class="product-img img-gow3"></div>
+        <p class="product-title">God of War III Remastered</p>
+        <p class="product-price">R$ 79,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo Ghost of Sparta -->
+      <div class="product-card">
+        <div class="product-img img-ghost"></div>
+        <p class="product-title">god of war sons of sparta</p>
+        <p class="product-price">R$ 39,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo 3 -->
+      <div class="product-card" style="border: 1px solid var(--blood);">
+        <div class="product-img img-ragnarok"></div>
+        <p class="product-title">God of War: Ragnarök</p>
+        <p class="product-price">R$ 299,90</p>
+        <button class="buy-btn" style="background: var(--gold);">Comprar Agora</button>
+      </div>
+
+      <!-- Jogo 4 -->
+      <div class="product-card">
+        <div class="product-img img-gow2018"></div>
+        <p class="product-title">God of War - PC/PS4</p>
+        <p class="product-price">R$ 149,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo 5 -->
+      <div class="product-card">
+        <div class="product-img img-ascension"></div>
+        <p class="product-title">God of War: Ascension</p>
+        <p class="product-price">R$ 59,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+      <!-- Jogo 6 -->
+      <div class="product-card">
+        <div class="product-img img-chains"></div>
+        <p class="product-title">Collection - PSP Classics</p>
+        <p class="product-price">R$ 39,90</p>
+        <button class="buy-btn">Adquirir</button>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p style="font-family: 'IM Fell English', serif; font-style: italic; color: var(--dim);">"Prepare-se para a jornada."</p>
+</footer>
+
+<script>
+  // Efeito de brasas idêntico ao da index
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#A52020','#CD5C5C','#B8860B','#FF6600','#FF4500'];
+  for (let i = 0; i < 50; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s;
+      animation-delay:${del}s;
+      --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>
