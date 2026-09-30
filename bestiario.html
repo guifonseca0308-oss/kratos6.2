@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>BESTIÁRIO — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="fotos/omega.png">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --blood:      #8B0000;
+    --embers:     #C0392B;
+    --gold:       #B8860B;
+    --gold-light: #DAA520;
+    --ash:        #D4CFC8;
+    --dark:       #0D0B09;
+    --dark2:      #1A1410;
+    --dark3:      #251E17;
+    --stone:      #3A3028;
+    --muted:      #9a8a7a;
+    --dim:        #7a6a60;
+  }
+
+  body {
+    background: var(--dark);
+    color: var(--ash);
+    font-family: 'Cinzel', serif;
+    overflow-x: hidden;
+  }
+
+  .hero {
+    min-height: 60vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 70%, rgba(90,10,10,0.4) 0%, transparent 70%), #0D0B09;
+    border-bottom: 6px double var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    color: #fff;
+    text-shadow: 0 0 30px rgba(139,0,0,0.9);
+    text-align: center;
+  }
+
+  .section { padding: 4rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  
+  .category-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: 32px;
+    color: var(--gold);
+    margin: 3rem 0 2rem;
+    text-align: center;
+    letter-spacing: 0.2em;
+  }
+
+  .enemy-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+  }
+
+  .enemy-card {
+    background: var(--dark2);
+    border: 1px solid #2a2018;
+    position: relative;
+    transition: all 0.3s ease;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .enemy-card:hover {
+    border-color: var(--blood);
+    transform: translateY(-5px);
+  }
+
+  .enemy-img {
+    width: 100%;
+    height: 300px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .enemy-img::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, var(--dark2), transparent);
+  }
+
+  .enemy-info { padding: 1.5rem; text-align: center; }
+  
+  .enemy-name {
+    font-family: 'Cinzel', serif;
+    font-size: 22px;
+    color: #fff;
+    margin-bottom: 0.5rem;
+  }
+
+  .enemy-fate {
+    font-family: 'IM Fell English', serif;
+    font-style: italic;
+    font-size: 14px;
+    color: var(--blood);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  /* IMAGENS DO BESTIÁRIO - ADICIONE AS FOTOS NA PASTA 'fotos/' */
+  .img-zeus { background-image: url('fotos/Zeus_-_Ascension.webp'); }
+  .img-ares { background-image: url('fotos/Godofwarascension_poster_ares_additions_01.webp'); }
+  .img-baldur { background-image: url('fotos/how-does-baldur-invulnerability-works-v0-8m0ivkxwudo91.webp'); }
+  .img-odin { background-image: url('fotos/how-did-odin-become-the-best-villain-in-the-saga-v0-6pwxfth2h7eg1.jpg'); }
+  .img-hydra { background-image: url('fotos/god-of-war-original-art.webp'); }
+  .img-medusa { background-image: url('fotos/euryale.jpg'); }
+  .img-kraken { background-image: url('fotos/especial-god-of-war-gow-kratos-05-pn.jpg'); }
+  .img-sigrun { background-image: url('fotos/painting-of-sigrun-the-valkyrie-queen-v0-n8euz5simjo81.webp'); }
+  .img-garm { background-image: url('fotos/Garm.webp'); }
+  .img-cyclops { background-image: url('fotos/whos-winning-a-troll-or-a-cyclops-v0-645a3ztvz72f1.jpg'); }
+  .img-poseidon { background-image: url('fotos/Kratos-vs-poseidon-god-of-war-3-8017.webp'); }
+  .img-hades { background-image: url('fotos/250px-Hades_-_Ascension.webp'); }
+  .img-thor { background-image: url('fotos/god-of-war-ragnaroks-thor-design-is-peak-and-so-is-his-v0-v6o7s9iddkqc1.webp'); }
+  .img-helios { background-image: url('fotos/how-strong-is-hermes-and-helios-in-lore-v0-gi771z1jt61d1.webp'); }
+  .img-minotaur { background-image: url('fotos/Minotaure_GOW_III.webp'); }
+  .img-nidhogg { background-image: url('fotos/Nidhogg.webp'); }
+  .img-cronos { background-image: url('fotos/Cronos.webp'); }
+  .img-hercules { background-image: url('fotos/mgbp7abe35hd1.jpeg'); }
+  .img-heimdall { background-image: url('fotos/d5cvyqshxm3a1.jpg'); }
+  .img-hermes { background-image: url('fotos/how-strong-is-hermes-and-helios-in-lore-v0-pvp03z5jt61d1.jpg'); }
+  .img-sisters { background-image: url('fotos/Rei_barbaro_morto.webp'); }
+  .img-hephaestus { background-image: url(' fotos/Kato324.webp'); }
+  .img-theseus { background-image: url('fotos/teseu.webp'); }
+  .img-icarus { background-image: url('fotos/icarus.webp'); }
+  .img-siren { background-image: url('fotos/sereia.jpg'); }
+  .img-centaur { background-image: url('fotos/centauro.webp'); }
+  .img-troll { background-image: url('fotos/god-of-war-trolls.jpg'); }
+  .img-cerberus { background-image: url('fotos/640x450_4456_God_of_War_II_Cerberus_3d_fantasy_creature_cerber_picture_image_digital_art.webp'); }
+  .img-hera { background-image: url('fotos/hera.webp'); }
+  .img-barbarian { background-image: url('fotos/Rei_barbaro_morto.webp'); }
+  .img-colossus { background-image: url('fotos/colosso.jpg'); }
+  .img-perses { background-image: url('fotos/perses.jpg'); }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-70vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid #1a1510; }
+  .footer-omega { font-size: 48px; color: var(--blood); opacity: 0.4; margin-bottom: 1rem; }
+
+  /* RESPONSIVIDADE */
+  @media (max-width: 768px) {
+    .hero-title { font-size: 50px; }
+    .enemy-grid { grid-template-columns: 1fr; }
+    .enemy-img { height: 250px; }
+    .category-title { font-size: 24px; letter-spacing: 0.1em; }
+  }
+</style>
+</head>
+<body>
+
+<!-- O Menu agora é gerado apenas pelo script.js para evitar erros -->
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">O Flagelo dos Reinos</p>
+  <h1 class="hero-title">BESTIÁRIO</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    
+    <h2 class="category-title">Deuses Mortos</h2>
+    <div class="enemy-grid">
+      <div class="enemy-card">
+        <div class="enemy-img img-ares"></div>
+        <div class="enemy-info"><p class="enemy-name">Ares</p><p class="enemy-fate">Trespassado pela Lâmina dos Deuses</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-zeus"></div>
+        <div class="enemy-info"><p class="enemy-name">Zeus</p><p class="enemy-fate">Espancado com as próprias mãos</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-baldur"></div>
+        <div class="enemy-info"><p class="enemy-name">Baldur</p><p class="enemy-fate">Pescoço quebrado na neve</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-odin"></div>
+        <div class="enemy-info"><p class="enemy-name">Odin</p><p class="enemy-fate">Alma selada por Atreus</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-poseidon"></div>
+        <div class="enemy-info"><p class="enemy-name">Poseidon</p><p class="enemy-fate">Esmagado contra as rochas</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-hades"></div>
+        <div class="enemy-info"><p class="enemy-name">Hades</p><p class="enemy-fate">Alma arrancada por suas garras</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-thor"></div>
+        <div class="enemy-info"><p class="enemy-name">Thor</p><p class="enemy-fate">Atravessado pela lança de Odin</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-helios"></div>
+        <div class="enemy-info"><p class="enemy-name">Helios</p><p class="enemy-fate">Cabeça arrancada brutalmente</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-hercules"></div>
+        <div class="enemy-info"><p class="enemy-name">Hércules</p><p class="enemy-fate">Esmagado pelos Nemean Cestus</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-heimdall"></div>
+        <div class="enemy-info"><p class="enemy-name">Heimdall</p><p class="enemy-fate">Estrangulado em Vanaheim</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-hermes"></div>
+        <div class="enemy-info"><p class="enemy-name">Hermes</p><p class="enemy-fate">Pernas decepadas pela glória</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-hera"></div>
+        <div class="enemy-info"><p class="enemy-name">Hera</p><p class="enemy-fate">Estrangulada em seu próprio jardim</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-barbarian"></div>
+        <div class="enemy-info"><p class="enemy-name">Rei Bárbaro</p><p class="enemy-fate">Martelado até a morte no submundo</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-hephaestus"></div>
+        <div class="enemy-info"><p class="enemy-name">Hefaisto</p><p class="enemy-fate">Esmagado em sua própria bigorna</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-theseus"></div>
+        <div class="enemy-info"><p class="enemy-name">Teseu</p><p class="enemy-fate">Crânio esmagado pela porta de bronze</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-icarus"></div>
+        <div class="enemy-info"><p class="enemy-name">Ícaro</p><p class="enemy-fate">Asas arrancadas e lançado ao abismo</p></div>
+      </div>
+    </div>
+
+    <h2 class="category-title">Monstros Lendários</h2>
+    <div class="enemy-grid">
+      <div class="enemy-card">
+        <div class="enemy-img img-hydra"></div>
+        <div class="enemy-info"><p class="enemy-name">Hidra</p><p class="enemy-fate">Empalada no mastro do navio</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-medusa"></div>
+        <div class="enemy-info"><p class="enemy-name">Medusa</p><p class="enemy-fate">Decapitada</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-kraken"></div>
+        <div class="enemy-info"><p class="enemy-name">Kraken</p><p class="enemy-fate">Atravessado pelas pontes de metal</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-sigrun"></div>
+        <div class="enemy-info"><p class="enemy-name">Sigrun (Rainha Valquíria)</p><p class="enemy-fate">Derrotada em combate honroso</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-garm"></div>
+        <div class="enemy-info"><p class="enemy-name">Garm</p><p class="enemy-fate">Domado e transformado por Fenrir</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-cyclops"></div>
+        <div class="enemy-info"><p class="enemy-name">Ciclope</p><p class="enemy-fate">Olho arrancado</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-minotaur"></div>
+        <div class="enemy-info"><p class="enemy-name">Minotauro</p><p class="enemy-fate">Empalado por tora em chamas</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-nidhogg"></div>
+        <div class="enemy-info"><p class="enemy-name">Nidhogg</p><p class="enemy-fate">Obliterada no Reino entre Reinos</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-cronos"></div>
+        <div class="enemy-info"><p class="enemy-name">Cronos</p><p class="enemy-fate">Perfurado pela Lâmina do Olimpo</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-sisters"></div>
+        <div class="enemy-info"><p class="enemy-name">Irmãs do Destino</p><p class="enemy-fate">Presas no tempo e estilhaçadas</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-troll"></div>
+        <div class="enemy-info"><p class="enemy-name">Troll de Gelo</p><p class="enemy-fate">Crânio esmagado pelo próprio pilar</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-cerberus"></div>
+        <div class="enemy-info"><p class="enemy-name">Cérbero</p><p class="enemy-fate">Três cabeças domadas e destruídas</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-colossus"></div>
+        <div class="enemy-info"><p class="enemy-name">Colosso de Rodes</p><p class="enemy-fate">Destruído pela Lâmina do Olimpo</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-perses"></div>
+        <div class="enemy-info"><p class="enemy-name">Perses</p><p class="enemy-fate">Lançado ao abismo pelo espartano</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-siren"></div>
+        <div class="enemy-info"><p class="enemy-name">Sereia</p><p class="enemy-fate">Coluna quebrada e pescoço partido</p></div>
+      </div>
+      <div class="enemy-card">
+        <div class="enemy-img img-centaur"></div>
+        <div class="enemy-info"><p class="enemy-name">Centauro</p><p class="enemy-fate">Retalhado e estripado em batalha</p></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <!-- Elemento de áudio oculto -->
+  <audio id="bladeSound" preload="auto">
+    <source src="sons/blade-slash.mp3" type="audio/mpeg">
+  </audio>
+
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"Um monstro mata monstros."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#A52020','#CD5C5C','#B8860B','#FF6600','#FF4500'];
+  for (let i = 0; i < 50; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s;
+      animation-delay:${del}s;
+      --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+
+  // Lógica para o som de lâmina no hover
+  const bladeSound = document.getElementById('bladeSound');
+  
+  document.querySelectorAll('.enemy-card').forEach(card => {
+    card.addEventListener('mouseenter', () => {
+      // Reinicia o som para permitir disparos rápidos
+      bladeSound.currentTime = 0;
+      bladeSound.play().catch(e => console.log("Áudio bloqueado aguardando interação do usuário."));
+    });
+  });
+</script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0b09">
+<title>QUIZ — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<style>
+  body { min-height: 100vh; background: radial-gradient(ellipse at 50% 0%, rgba(139,0,0,.2), transparent 42%), var(--dark); }
+  .quiz-page { max-width: 1040px; margin: 0 auto; padding: 38px 24px 72px; }
+  .topline { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-bottom: 1px solid var(--stone); padding-bottom: 18px; }
+  .brand { color: var(--gold); font-family: 'Cinzel Decorative', serif; font-size: 15px; text-decoration: none; letter-spacing: .08em; }
+  .back-link { color: var(--muted); font-size: 12px; text-decoration: none; }
+  .back-link:hover { color: var(--gold-light); }
+  .intro { text-align: center; padding: 46px 0 28px; animation: rise-in .55s ease both; }
+  .eyebrow { color: var(--gold-light); font-size: 11px; text-transform: uppercase; letter-spacing: .24em; }
+  h1 { color: #fff; font: 900 clamp(38px, 7vw, 68px)/1.1 'Cinzel Decorative', serif; margin: 12px 0; }
+  .intro p { max-width: 600px; margin: 0 auto; color: var(--muted); font: 18px/1.6 'IM Fell English', serif; }
+  .layout { display: grid; grid-template-columns: minmax(0, 1.5fr) minmax(230px, .8fr); gap: 42px; align-items: start; }
+  .section-title { color: var(--gold-light); font: 600 17px 'Cinzel', serif; margin: 0 0 18px; }
+  .levels { display: grid; gap: 10px; }
+  .level-option { position: relative; }
+  .level-option input { position: absolute; opacity: 0; pointer-events: none; }
+  .level-label { display: grid; grid-template-columns: 1fr auto; gap: 4px 16px; padding: 15px 16px; border: 1px solid var(--stone); background: rgba(26,20,16,.72); cursor: pointer; transition: border-color .18s ease, background .18s ease, transform .18s ease; }
+  .level-label:hover { border-color: var(--gold); transform: translateX(3px); }
+  .level-option input:checked + .level-label { border-color: var(--embers); background: rgba(139,0,0,.14); box-shadow: inset 3px 0 var(--embers); }
+  .level-option input:focus-visible + .level-label { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  .level-name { color: var(--ash); font-weight: 700; }
+  .level-detail { color: var(--muted); font: 15px 'IM Fell English', serif; }
+  .level-count { align-self: center; grid-column: 2; grid-row: 1 / span 2; color: var(--gold-light); font-size: 12px; text-align: right; }
+  .player-field { display: block; margin-top: 22px; color: var(--muted); font-size: 11px; text-transform: uppercase; letter-spacing: .1em; }
+  .player-field input { display: block; width: 100%; margin-top: 8px; padding: 12px 13px; border: 1px solid var(--stone); background: var(--dark2); color: var(--ash); font: 15px 'Cinzel', serif; }
+  .player-field input:focus { outline: 1px solid var(--gold); border-color: var(--gold); }
+  .primary-btn, .secondary-btn { min-height: 46px; border: 1px solid var(--gold); padding: 11px 20px; background: var(--gold); color: #100d08; font: 700 12px 'Cinzel', serif; letter-spacing: .08em; text-transform: uppercase; cursor: pointer; transition: background .18s ease, color .18s ease, transform .18s ease; }
+  .primary-btn { width: 100%; margin-top: 18px; }
+  .infinite-btn { width: 100%; margin-top: 10px; border-color: var(--blood); background: transparent; color: var(--ash); }
+  .infinite-btn:hover { border-color: var(--embers); background: rgba(139,0,0,.18); color: #fff; }
+  .primary-btn:hover, .secondary-btn:hover { background: transparent; color: var(--gold-light); transform: translateY(-2px); }
+  .leaderboard { border-left: 1px solid var(--stone); padding-left: 24px; }
+  .leaderboard ol { list-style: none; counter-reset: rank; }
+  .leaderboard li { display: grid; grid-template-columns: 26px 1fr auto; gap: 8px; padding: 11px 0; border-bottom: 1px solid rgba(58,48,40,.65); color: var(--ash); font-size: 12px; counter-increment: rank; }
+  .leaderboard li::before { content: counter(rank, decimal-leading-zero); color: var(--gold); }
+  .leaderboard li strong { color: var(--gold-light); }
+  .empty-rank { color: var(--dim); font: 16px 'IM Fell English', serif; }
+  .game-panel { max-width: 760px; margin: 0 auto; }
+  .game-meta { display: flex; justify-content: space-between; align-items: center; gap: 12px; color: var(--muted); font-size: 12px; text-transform: uppercase; letter-spacing: .09em; }
+  .timer { color: var(--gold-light); font: 700 22px 'Cinzel', serif; font-variant-numeric: tabular-nums; }
+  .timer.urgent { color: #ff654f; animation: pulse .7s ease-in-out infinite alternate; }
+  .progress-track { height: 3px; margin: 12px 0 32px; background: var(--dark3); }
+  .progress-fill { height: 100%; width: 100%; background: linear-gradient(90deg, var(--blood), var(--gold-light)); transition: width 1s linear; }
+  .question-count { color: var(--gold); font-size: 11px; letter-spacing: .15em; text-transform: uppercase; }
+  .question-text { margin: 12px 0 24px; color: #fff; font: 600 clamp(20px, 4vw, 28px)/1.4 'Cinzel', serif; }
+  .answers { display: grid; gap: 10px; }
+  .answer-btn { width: 100%; min-height: 52px; padding: 13px 16px; border: 1px solid var(--stone); background: var(--dark2); color: var(--ash); text-align: left; font: 15px/1.45 'IM Fell English', serif; cursor: pointer; scroll-margin-block: 110px; transition: border-color .18s ease, background .18s ease; }
+  .answer-btn:hover:not(:disabled) { border-color: var(--gold); background: var(--dark3); }
+  .answer-btn:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 2px; }
+  .answer-btn:disabled { cursor: default; }
+  .answer-btn.correct { border-color: #779b59; background: rgba(73,107,47,.23); }
+  .answer-btn.incorrect { border-color: var(--embers); background: rgba(139,0,0,.2); }
+  .feedback { min-height: 28px; margin-top: 15px; color: var(--gold-light); font: 16px 'IM Fell English', serif; }
+  .game-footer { display: flex; align-items: center; justify-content: flex-start; gap: 18px; margin-top: 10px; padding-right: 100px; }
+  .score-live { color: var(--muted); font-size: 12px; }
+  .secondary-btn { background: transparent; color: var(--gold-light); scroll-margin-block: 110px; }
+  .secondary-btn:disabled { opacity: .35; cursor: not-allowed; transform: none; }
+  .result-panel { max-width: 660px; margin: 0 auto; text-align: center; animation: rise-in .4s ease both; }
+  .result-rank { margin: 20px 0 8px; color: var(--gold-light); font: 900 clamp(30px, 7vw, 52px) 'Cinzel Decorative', serif; }
+  .result-score { color: #fff; font: 700 26px 'Cinzel', serif; }
+  .result-note { margin: 12px 0 24px; color: var(--muted); font: 17px 'IM Fell English', serif; }
+  .result-stats { display: flex; justify-content: center; gap: 36px; padding: 17px 0; border-top: 1px solid var(--stone); border-bottom: 1px solid var(--stone); color: var(--muted); font-size: 11px; text-transform: uppercase; }
+  .result-stats strong { display: block; margin-top: 5px; color: var(--ash); font: 700 20px 'Cinzel', serif; }
+  .result-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; margin-top: 22px; }
+  .result-actions .primary-btn { width: auto; margin: 0; }
+  [hidden] { display: none !important; }
+  @keyframes rise-in { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes pulse { to { opacity: .55; } }
+  @media (max-width: 700px) { .quiz-page { padding: 24px 18px 48px; } .layout { grid-template-columns: 1fr; gap: 32px; } .leaderboard { border-left: 0; border-top: 1px solid var(--stone); padding: 22px 0 0; } .intro { padding-top: 36px; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="quiz-page">
+  <div class="topline">
+    <a class="brand" href="index.html">KRATOS</a>
+    <a class="back-link" href="index.html">Voltar ao início</a>
+  </div>
+
+  <header class="intro">
+    <p class="eyebrow">Prove seu conhecimento</p>
+    <h1>Quiz dos Deuses</h1>
+    <p>Da Grécia antiga aos Nove Reinos: responda antes que o tempo acabe e conquiste seu lugar no ranking.</p>
+  </header>
+
+  <section id="setup" class="layout" aria-labelledby="level-title">
+    <div>
+      <h2 class="section-title" id="level-title">Escolha seu nível</h2>
+      <div class="levels" role="radiogroup" aria-label="Nível do quiz">
+        <div class="level-option"><input type="radio" id="level-mortal" name="level" value="mortal" checked><label class="level-label" for="level-mortal"><span class="level-name">Mortal</span><span class="level-detail">Uma primeira provação</span><span class="level-count">5 perguntas<br>20 s cada</span></label></div>
+        <div class="level-option"><input type="radio" id="level-guerreiro" name="level" value="guerreiro"><label class="level-label" for="level-guerreiro"><span class="level-name">Guerreiro</span><span class="level-detail">A batalha exige atenção</span><span class="level-count">8 perguntas<br>30 s cada</span></label></div>
+        <div class="level-option"><input type="radio" id="level-deus" name="level" value="deus"><label class="level-label" for="level-deus"><span class="level-name">Deus da Guerra</span><span class="level-detail">Só os mais sábios resistem</span><span class="level-count">12 perguntas<br>40 s cada</span></label></div>
+      </div>
+      <label class="player-field" for="player-name">Nome no ranking
+        <input id="player-name" type="text" maxlength="18" autocomplete="nickname" placeholder="Ex.: Atreus">
+      </label>
+      <button class="primary-btn" id="start-quiz" type="button">Iniciar provação</button>
+      <button class="primary-btn infinite-btn" id="start-infinite" type="button">Quiz infinito · jogar até errar</button>
+    </div>
+    <aside class="leaderboard" aria-labelledby="rank-title">
+      <h2 class="section-title" id="rank-title">Melhores guerreiros</h2>
+      <ol id="rank-list"></ol>
+      <p class="empty-rank" id="empty-rank">Seu nome pode ser o primeiro.</p>
+    </aside>
+  </section>
+
+  <section id="game" class="game-panel" aria-live="polite" hidden>
+    <div class="game-meta"><span id="level-label">Mortal</span><span class="timer" id="timer" aria-label="Tempo restante">20</span></div>
+    <div class="progress-track" role="progressbar" aria-label="Tempo restante" aria-valuemin="0" aria-valuemax="100"><div class="progress-fill" id="progress-fill"></div></div>
+    <p class="question-count" id="question-count"></p>
+    <h2 class="question-text" id="question-text"></h2>
+    <div class="answers" id="answers"></div>
+    <p class="feedback" id="feedback" aria-live="polite"></p>
+    <div class="game-footer"><span class="score-live" id="score-live">Pontos: 0</span><button class="secondary-btn" id="next-question" type="button" disabled>Próxima</button></div>
+  </section>
+
+  <section id="result" class="result-panel" aria-live="polite" hidden>
+    <p class="eyebrow">Provação concluída</p>
+    <h2 class="result-rank" id="result-rank"></h2>
+    <p class="result-score" id="result-score"></p>
+    <p class="result-note" id="result-note"></p>
+    <div class="result-stats"><span>Acertos<strong id="result-correct"></strong></span><span>Nível<strong id="result-level"></strong></span><span>Pontos<strong id="result-points"></strong></span></div>
+    <div class="result-actions"><button class="primary-btn" id="play-again" type="button">Jogar novamente</button><a class="secondary-btn" href="index.html" style="text-decoration:none">Voltar ao início</a></div>
+  </section>
+</main>
+<script>
+  const questionBank = [
+    { q: 'Qual deus grego ofereceu as Lâminas do Caos a Kratos?', a: ['Atena', 'Ares', 'Poseidon', 'Hades'], c: 1 },
+    { q: 'Qual é o nome do filho de Kratos nos jogos nórdicos?', a: ['Baldur', 'Mimir', 'Atreus', 'Sindri'], c: 2 },
+    { q: 'Que arma Kratos recebe de Brok e Sindri em God of War (2018)?', a: ['Espada do Olimpo', 'Machado Leviatã', 'Lança Draupnir', 'Martelo Mjölnir'], c: 1 },
+    { q: 'Quem é o pai de Kratos na mitologia grega da série?', a: ['Ares', 'Cronos', 'Zeus', 'Hades'], c: 2 },
+    { q: 'Qual é o nome da esposa de Kratos e mãe de Atreus?', a: ['Freya', 'Sif', 'Faye', 'Calliope'], c: 2 },
+    { q: 'Qual reino é lar dos elfos luminosos e sombrios?', a: ['Alfheim', 'Vanaheim', 'Jotunheim', 'Muspelheim'], c: 0 },
+    { q: 'Qual titã é mãe de Zeus na saga grega?', a: ['Gaia', 'Reia', 'Hera', 'Nix'], c: 1 },
+    { q: 'Que criatura acompanha Kratos como cabeça falante?', a: ['Brok', 'Týr', 'Mimir', 'Huginn'], c: 2 },
+    { q: 'Como se chama a antiga esposa de Kratos e mãe de sua filha Calliope?', a: ['Lysandra', 'Faye', 'Atena', 'Perséfone'], c: 0 },
+    { q: 'Qual é o nome da lança criada pelos irmãos Huldra em Ragnarök?', a: ['Gungnir', 'Draupnir', 'Laevateinn', 'Hofud'], c: 1 },
+    { q: 'Quem é a deusa nórdica que ajuda Kratos e Atreus?', a: ['Sif', 'Freya', 'Skadi', 'Angrboda'], c: 1 },
+    { q: 'Qual é o nome do reino dos gigantes?', a: ['Niflheim', 'Vanaheim', 'Jotunheim', 'Asgard'], c: 2 },
+    { q: 'Quem é o irmão de Brok?', a: ['Sindri', 'Surtr', 'Modi', 'Magni'], c: 0 },
+    { q: 'Qual personagem é conhecido como o Estranho no início de God of War (2018)?', a: ['Heimdall', 'Baldur', 'Týr', 'Thor'], c: 1 },
+    { q: 'Qual é o nome da filha de Kratos na saga grega?', a: ['Calliope', 'Atreia', 'Pandora', 'Deimos'], c: 0 },
+    { q: 'Qual deus nórdico é o pai de Atreus?', a: ['Odin', 'Týr', 'Thor', 'Kratos'], c: 3 },
+    { q: 'Quem forjou as Lâminas do Caos?', a: ['Brok e Sindri', 'Hefesto', 'Ares', 'Dédalo'], c: 2 },
+    { q: 'Qual é o nome do lobo gigante ligado a Atreus?', a: ['Garm', 'Fenrir', 'Sköll', 'Hati'], c: 1 },
+    { q: 'Que objeto Kratos usa para viajar entre os reinos nórdicos?', a: ['Bifröst', 'Olho de Odin', 'Espelho de Freya', 'Pedra de Jötnar'], c: 0 },
+    { q: 'Quem é o principal antagonista divino de God of War III?', a: ['Zeus', 'Ares', 'Hermes', 'Hércules'], c: 0 }
+  ];
+  const levels = {
+    mortal: { name: 'Mortal', count: 5, seconds: 20 },
+    guerreiro: { name: 'Guerreiro', count: 8, seconds: 30 },
+    deus: { name: 'Deus da Guerra', count: 12, seconds: 40 }
+  };
+  const rankNames = ['Mortal', 'Guerreiro', 'Herói', 'Lenda', 'Deus da Guerra'];
+  let selectedQuestions = [];
+  let currentQuestion = 0;
+  let score = 0;
+  let correctAnswers = 0;
+  let timeLeft = 0;
+  let timerId = null;
+  let hasAnswered = false;
+  let playerName = 'Guerreiro';
+  let activeLevel;
+  let infiniteMode = false;
+  let infiniteEndReason = '';
+  const byId = id => document.getElementById(id);
+
+  function readLeaderboard() {
+    try { return JSON.parse(localStorage.getItem('godOfWarQuizRank') || '[]'); }
+    catch { return []; }
+  }
+
+  function renderLeaderboard() {
+    const entries = readLeaderboard().slice(0, 5);
+    const list = byId('rank-list');
+    list.replaceChildren();
+    byId('empty-rank').hidden = entries.length > 0;
+    entries.forEach(entry => {
+      const item = document.createElement('li');
+      const name = document.createElement('span');
+      const points = document.createElement('strong');
+      name.textContent = entry.name;
+      points.textContent = `${entry.score} pts`;
+      item.append(name, points);
+      list.append(item);
+    });
+  }
+
+  function chooseQuestions(count) {
+    const shuffledQuestions = [...questionBank];
+    for (let position = shuffledQuestions.length - 1; position > 0; position -= 1) {
+      const swapPosition = Math.floor(Math.random() * (position + 1));
+      [shuffledQuestions[position], shuffledQuestions[swapPosition]] = [shuffledQuestions[swapPosition], shuffledQuestions[position]];
+    }
+    return shuffledQuestions.slice(0, count);
+  }
+
+  function startGame() {
+    const choice = document.querySelector('input[name="level"]:checked');
+    infiniteMode = false;
+    infiniteEndReason = '';
+    activeLevel = levels[choice.value];
+    playerName = byId('player-name').value.trim().slice(0, 18) || 'Guerreiro';
+    selectedQuestions = chooseQuestions(activeLevel.count);
+    currentQuestion = 0;
+    score = 0;
+    correctAnswers = 0;
+    byId('setup').hidden = true;
+    byId('result').hidden = true;
+    byId('game').hidden = false;
+    byId('level-label').textContent = activeLevel.name;
+    showQuestion();
+  }
+
+  function startInfiniteGame() {
+    infiniteMode = true;
+    infiniteEndReason = '';
+    activeLevel = { name: 'Quiz Infinito', count: questionBank.length, seconds: 0 };
+    playerName = byId('player-name').value.trim().slice(0, 18) || 'Guerreiro';
+    selectedQuestions = chooseQuestions(questionBank.length);
+    currentQuestion = 0;
+    score = 0;
+    correctAnswers = 0;
+    byId('setup').hidden = true;
+    byId('result').hidden = true;
+    byId('game').hidden = false;
+    byId('level-label').textContent = activeLevel.name;
+    showQuestion();
+  }
+
+  function showQuestion() {
+    clearInterval(timerId);
+    hasAnswered = false;
+    const question = selectedQuestions[currentQuestion];
+    byId('question-count').textContent = infiniteMode ? `Pergunta ${currentQuestion + 1} · Sem repetição` : `Pergunta ${currentQuestion + 1} de ${selectedQuestions.length}`;
+    byId('question-text').textContent = question.q;
+    byId('feedback').textContent = '';
+    byId('score-live').textContent = `Pontos: ${score}`;
+    byId('next-question').disabled = true;
+    byId('next-question').textContent = infiniteMode ? 'Próxima' : currentQuestion === selectedQuestions.length - 1 ? 'Ver resultado' : 'Próxima';
+    const answers = byId('answers');
+    answers.replaceChildren();
+    question.a.forEach((answer, index) => {
+      const button = document.createElement('button');
+      button.type = 'button';
+      button.className = 'answer-btn';
+      button.textContent = answer;
+      button.addEventListener('click', () => selectAnswer(index));
+      answers.append(button);
+    });
+    byId('timer').hidden = infiniteMode;
+    document.querySelector('.progress-track').hidden = infiniteMode;
+    if (!infiniteMode) {
+      timeLeft = activeLevel.seconds;
+      updateTimer();
+      timerId = setInterval(() => {
+        timeLeft -= 1;
+        updateTimer();
+        if (timeLeft <= 0) timeOut();
+      }, 1000);
+    }
+  }
+
+  function updateTimer() {
+    byId('timer').textContent = timeLeft;
+    byId('timer').classList.toggle('urgent', timeLeft <= 5);
+    byId('progress-fill').style.width = `${Math.max(0, timeLeft / activeLevel.seconds * 100)}%`;
+    document.querySelector('.progress-track').setAttribute('aria-valuenow', String(Math.round(timeLeft / activeLevel.seconds * 100)));
+  }
+
+  function revealAnswer(chosenIndex) {
+    const question = selectedQuestions[currentQuestion];
+    [...byId('answers').children].forEach((button, index) => {
+      button.disabled = true;
+      if (index === question.c) button.classList.add('correct');
+      if (index === chosenIndex && chosenIndex !== question.c) button.classList.add('incorrect');
+    });
+    byId('next-question').disabled = false;
+  }
+
+  function selectAnswer(index) {
+    if (hasAnswered) return;
+    hasAnswered = true;
+    clearInterval(timerId);
+    const question = selectedQuestions[currentQuestion];
+    if (index === question.c) {
+      correctAnswers += 1;
+      score += infiniteMode ? 100 : 100 + Math.round(timeLeft / activeLevel.seconds * 50);
+      window.awardGodOfWarProgress?.({ id: `quiz:${question.q}`, xp: 10, medal: correctAnswers === 1 ? 'first-quiz' : undefined, relic: 'mimir-relic', stat: 'quizAnswers' });
+      byId('feedback').textContent = 'Resposta correta. Sua sabedoria foi reconhecida.';
+    } else {
+      byId('feedback').textContent = `Resposta incorreta. A resposta era: ${question.a[question.c]}.`;
+    }
+    byId('score-live').textContent = `Pontos: ${score}`;
+    revealAnswer(index);
+    if (infiniteMode && index !== question.c) {
+      infiniteEndReason = 'você errou e encerrou sua sequência.';
+      byId('next-question').disabled = true;
+      setTimeout(showResult, 900);
+    }
+  }
+
+  function timeOut() {
+    if (hasAnswered) return;
+    hasAnswered = true;
+    clearInterval(timerId);
+    byId('feedback').textContent = `O tempo acabou. A resposta era: ${selectedQuestions[currentQuestion].a[selectedQuestions[currentQuestion].c]}.`;
+    revealAnswer(-1);
+    byId('timer').textContent = '0';
+  }
+
+  function showResult() {
+    clearInterval(timerId);
+    byId('game').hidden = true;
+    byId('result').hidden = false;
+    const percent = Math.round(correctAnswers / selectedQuestions.length * 100);
+    const rankIndex = infiniteMode ? Math.min(4, Math.floor(correctAnswers / 4)) : Math.min(4, Math.floor(percent / 20));
+    byId('result-rank').textContent = rankNames[rankIndex];
+    byId('result-score').textContent = infiniteMode ? `${score} pontos · ${correctAnswers} acertos seguidos` : `${percent}% de aproveitamento`;
+    byId('result-note').textContent = infiniteMode ? `${playerName}, ${infiniteEndReason || 'você acertou todas as perguntas sem repetir nenhuma.'}` : `${playerName}, sua jornada nesta provação chegou ao fim.`;
+    byId('result-correct').textContent = `${correctAnswers}/${selectedQuestions.length}`;
+    byId('result-level').textContent = activeLevel.name;
+    byId('result-points').textContent = score;
+    try {
+      const results = readLeaderboard();
+      results.push({ name: playerName, score, level: activeLevel.name, date: Date.now() });
+      results.sort((first, second) => second.score - first.score || second.date - first.date);
+      localStorage.setItem('godOfWarQuizRank', JSON.stringify(results.slice(0, 5)));
+    } catch { /* O resultado continua disponível mesmo sem armazenamento local. */ }
+    renderLeaderboard();
+  }
+
+  byId('start-quiz').addEventListener('click', startGame);
+  byId('start-infinite').addEventListener('click', startInfiniteGame);
+  byId('next-question').addEventListener('click', () => {
+    if (!hasAnswered) return;
+    currentQuestion += 1;
+    if (currentQuestion >= selectedQuestions.length) showResult();
+    else showQuestion();
+  });
+  byId('play-again').addEventListener('click', () => {
+    byId('result').hidden = true;
+    byId('setup').hidden = false;
+  });
+  renderLeaderboard();
+</script>
+<script src="script.js"></script>
+</body>
+</html>

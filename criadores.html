@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CRIADORES — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<style>
+  .hero {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(139,0,0,0.2) 0%, transparent 70%), var(--dark);
+    border-bottom: 4px double var(--gold);
+    text-align: center;
+  }
+  .hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(32px, 6vw, 64px); color: #fff; text-shadow: 0 0 20px var(--blood); }
+  
+  .section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  
+  .creator-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+  }
+
+  .creator-card {
+    background: var(--dark2);
+    border: 1px solid var(--stone);
+    padding: 2.5rem;
+    transition: 0.3s;
+    border-top: 3px solid var(--blood);
+  }
+  .creator-card:hover { border-color: var(--gold); background: var(--dark3); transform: translateY(-5px); }
+  
+  .card-icon { font-size: 40px; color: var(--gold); margin-bottom: 1.5rem; display: block; }
+  .card-title { font-family: 'Cinzel Decorative', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 1rem; }
+  .card-desc { font-family: 'IM Fell English', serif; font-size: 16px; color: var(--muted); line-height: 1.6; }
+  
+  .tutorial-list { list-style: none; margin-top: 1.5rem; }
+  .tutorial-list li { 
+    padding: 10px 0; 
+    border-bottom: 1px solid var(--stone); 
+    font-family: 'Cinzel', serif; 
+    font-size: 13px; 
+    color: var(--ash);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .tutorial-list li::before { content: '◈'; color: var(--blood); }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Comunidade e Criação</p>
+  <h1 class="hero-title">ÁREA DE CRIADORES</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    <div class="creator-grid">
+      
+      <!-- Seção de Mods -->
+      <div class="creator-card">
+        <span class="card-icon">🛠️</span>
+        <h2 class="card-title">Espaço de Mods</h2>
+        <p class="card-desc">Transforme a jornada de Kratos com modificações visuais, novos trajes e ajustes de gameplay criados pela comunidade para PC.</p>
+        <ul class="tutorial-list">
+          <li>Como instalar Reshades Épicos</li>
+          <li>Skins Clássicas (GoW II/III) no Ragnarök</li>
+          <li>Modo Fotográfico Avançado</li>
+        </ul>
+      </div>
+
+      <!-- Tutoriais de Edição -->
+      <div class="creator-card" style="border-top-color: var(--gold);">
+        <span class="card-icon">🎬</span>
+        <h2 class="card-title">Edição de Vídeo</h2>
+        <p class="card-desc">Aprenda a capturar e editar combates cinematográficos, utilizando técnicas de câmera lenta e sincronização sonora.</p>
+        <ul class="tutorial-list">
+          <li>Color Grading Estilo "Cinematic"</li>
+          <li>Sound Design: Impactos e Rugidos</li>
+          <li>Transições de Corte de Lâmina</li>
+        </ul>
+      </div>
+
+      <!-- Guia de Ragnarök -->
+      <div class="creator-card">
+        <span class="card-icon">⚔️</span>
+        <h2 class="card-title">Criação de Conteúdo</h2>
+        <p class="card-desc">Dicas para streamers e YouTubers sobre como cobrir God of War Ragnarök sem spoilers e com alta qualidade técnica.</p>
+        <ul class="tutorial-list">
+          <li>Configuração de OBS para 4K/HDR</li>
+          <li>Thumbnails de Impacto (Runic Design)</li>
+          <li>Engajamento: Teorias e Lore</li>
+        </ul>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"Escreva sua própria saga."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#B8860B','#FF4500'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0; background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s; animation-delay:${del}s; --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

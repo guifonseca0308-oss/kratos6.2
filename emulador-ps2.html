@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="ps2-document">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#090909">
+  <title>EMULADOR PS2 — God of War</title>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="css/emulador-ps2.css">
+  <link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+</head>
+<body class="ps2-page">
+  <main>
+    <header class="ps2-hero">
+      <p class="ps2-kicker">A jornada começa no Olimpo</p>
+      <h1>EMULADOR <span>PS2</span></h1>
+      <p class="ps2-intro">Escolha sua batalha e prepare o jogo para abrir no PCSX2.</p>
+      <div class="ps2-status" aria-label="Estado dos componentes">
+        <div class="status-item"><span class="status-light"></span><span><strong>PCSX2</strong><small>v2.7.521 disponível</small></span></div>
+        <div class="status-item"><span class="status-light status-light--gold"></span><span><strong>BIOS PS2</strong><small>Use sua própria BIOS · configure no PCSX2</small></span></div>
+      </div>
+    </header>
+
+    <section class="ps2-library" aria-labelledby="library-title">
+      <div class="section-heading">
+        <div><p class="ps2-kicker">Biblioteca</p><h2 id="library-title">Escolha seu jogo</h2></div>
+        <button class="fullscreen-button" type="button" id="fullscreen-button" aria-label="Ativar tela cheia" title="Ativar tela cheia"><span aria-hidden="true">⛶</span><span>TELA CHEIA</span></button>
+      </div>
+
+      <div class="game-library">
+        <article class="ps2-game" data-game-card="gow1">
+          <img src="images/gow1.jpg" alt="Capa de God of War" class="game-cover">
+          <div class="game-copy"><p class="game-edition">PlayStation 2 · 2005</p><h3>God of War</h3><p>O início da vingança de Kratos contra Ares.</p>
+            <button class="play-button" type="button" data-play="gow1">JOGAR <span aria-hidden="true">↗</span></button>
+          </div>
+        </article>
+        <article class="ps2-game" data-game-card="gow2">
+          <img src="images/gow2.jpg" alt="Capa de God of War II" class="game-cover">
+          <div class="game-copy"><p class="game-edition">PlayStation 2 · 2007</p><h3>God of War II</h3><p>Desafie os deuses e mude o destino do Olimpo.</p>
+            <button class="play-button" type="button" data-play="gow2">JOGAR <span aria-hidden="true">↗</span></button>
+          </div>
+        </article>
+      </div>
+
+      <section class="file-panel" id="file-panel" aria-labelledby="file-title" hidden>
+        <div class="file-panel-mark" aria-hidden="true">Ω</div>
+        <div class="file-panel-copy">
+          <p class="ps2-kicker">Preparar jogo</p>
+          <h2 id="file-title">Selecione o arquivo do jogo</h2>
+          <p id="file-status" aria-live="polite">Escolha um arquivo de jogo para continuar.</p>
+          <p class="browser-note">No navegador, abra o arquivo manualmente pelo PCSX2; a abertura automática funciona no launcher desktop. A BIOS deve ser obtida legalmente e configurada no PCSX2.</p>
+        </div>
+        <label class="file-button" for="game-file">SELECIONAR ARQUIVO</label>
+        <input id="game-file" type="file" accept=".iso,.chd,.cue,.bin,.elf,.gz,.cso" hidden>
+      </section>
+    </section>
+
+    <section class="setup-section" aria-label="Configuração e controles">
+      <details class="setup-panel">
+        <summary><span class="setup-icon" aria-hidden="true">⌘</span><span><strong>Controles</strong><small>Teclado e controle conectado</small></span><span class="setup-chevron" aria-hidden="true">+</span></summary>
+        <div class="setup-content">
+          <p>Os comandos são definidos no PCSX2 em <strong>Settings &gt; Controllers</strong>. Use a tabela como referência inicial para o controle padrão:</p>
+          <div class="control-map" role="table" aria-label="Referência de controles">
+            <div role="row"><span role="cell">Ação</span><span role="cell">Controle PS2</span></div>
+            <div role="row"><span role="cell">Movimento</span><span role="cell">Analógico esquerdo</span></div>
+            <div role="row"><span role="cell">Ataque leve / forte</span><span role="cell">□ / △</span></div>
+            <div role="row"><span role="cell">Esquiva / agarrar</span><span role="cell">✕ / ○</span></div>
+            <div role="row"><span role="cell">Bloqueio</span><span role="cell">L1</span></div>
+          </div>
+        </div>
+      </details>
+      <details class="setup-panel">
+        <summary><span class="setup-icon" aria-hidden="true">⚙</span><span><strong>Configuração</strong><small>BIOS, vídeo e áudio no PCSX2</small></span><span class="setup-chevron" aria-hidden="true">+</span></summary>
+        <div class="setup-content">
+          <ol class="setup-steps">
+            <li>Em <strong>Settings &gt; BIOS</strong>, selecione a pasta <code>ps2-bios-all-bios</code> e escolha uma BIOS compatível com sua região.</li>
+            <li>Em <strong>Settings &gt; Graphics</strong>, escolha Vulkan ou Direct3D 12 e ajuste a resolução interna ao desempenho do PC.</li>
+            <li>Em <strong>Settings &gt; Audio</strong>, mantenha o dispositivo padrão do sistema ou selecione sua saída de áudio.</li>
+          </ol>
+          <p class="setup-disclaimer">Esta página organiza o acesso; as opções de emulação são aplicadas dentro do aplicativo PCSX2.</p>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="ps2-footer"><span aria-hidden="true">Ω</span><p>KRATOS · EMULADOR PS2</p></footer>
+  <script src="script.js"></script>
+  <script src="js/emulador-ps2.js"></script>
+</body>
+</html>

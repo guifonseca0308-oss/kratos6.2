@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ARMAS — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="fotos/omega.png">
+<style>
+  body { transition: background 0.5s ease; }
+  
+  .hero {
+    min-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(circle at center, rgba(139,0,0,0.2) 0%, transparent 70%), var(--dark);
+    border-bottom: 4px double var(--gold);
+    text-align: center;
+  }
+
+  .hero-title { font-family: 'Cinzel Decorative', serif; font-size: clamp(32px, 6vw, 64px); color: #fff; text-shadow: 0 0 20px var(--blood); }
+
+  .section { padding: 5rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+
+  .weapon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+    margin-top: 3rem;
+    perspective: 1000px;
+  }
+
+  .weapon-card {
+    background: var(--dark2);
+    border: 1px solid var(--stone);
+    padding: 2rem;
+    position: relative;
+    transition: 0.3s;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    transform-style: preserve-3d;
+  }
+
+  .weapon-card:hover { border-color: var(--gold); background: var(--dark3); transform: translateY(-5px); }
+  .weapon-card:hover { 
+    border-color: var(--gold); 
+    background: var(--dark3); 
+    transform: translateY(-15px) rotateX(5deg) rotateY(5deg);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.8);
+  }
+
+  .weapon-game { font-size: 11px; color: var(--gold); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 5px; display: block; opacity: 0.8; }
+
+  .usage-badge {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    background: var(--blood);
+    color: white;
+    padding: 5px 12px;
+    font-family: 'Cinzel', serif;
+    font-size: 12px;
+    font-weight: bold;
+    border-radius: 20px;
+  }
+
+  .weapon-icon {
+    width: 200px;
+    height: 200px;
+    margin: 0 auto 1.5rem;
+    border-radius: 50%;
+    background-color: #000; /* Fundo preto puro para mesclar com as fotos */
+    border: 3px solid var(--stone);
+    box-shadow: inset 0 0 50px #000, 0 0 20px rgba(0,0,0,0.5);
+    background-size: contain; /* Ajusta a arma sem cortar */
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+    filter: grayscale(0.5);
+  }
+
+  .weapon-card:hover .weapon-icon { transform: scale(1.05) rotate(3deg); border-color: var(--gold); box-shadow: inset 0 0 20px #000, 0 0 30px rgba(184, 134, 11, 0.4); }
+  .weapon-name { font-family: 'Cinzel Decorative', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 1rem; }
+  .weapon-card:hover .weapon-icon { 
+    transform: scale(1.15) rotate(5deg) translateZ(50px); 
+    filter: grayscale(0) brightness(1.2);
+    border-color: var(--gold); 
+    box-shadow: inset 0 0 20px #000, 0 0 50px rgba(139, 0, 0, 0.6); 
+  }
+  
+  .weapon-name { font-family: 'Cinzel Decorative', serif; font-size: 22px; color: var(--gold-light); margin-bottom: 1rem; transition: 0.3s; }
+  .weapon-card:hover .weapon-name { animation: glitchText 0.3s infinite; color: #fff; }
+
+  .weapon-desc { font-family: 'IM Fell English', serif; font-size: 16px; color: var(--muted); line-height: 1.6; margin-bottom: 2rem; }
+
+  .attr-mini { width: 100%; margin-top: auto; }
+  .attr-mini-row { display: flex; justify-content: space-between; font-size: 11px; text-transform: uppercase; margin-bottom: 5px; color: var(--ash); letter-spacing: 1px; }
+  .mini-bar-bg { background: var(--dark); height: 4px; width: 100%; margin-bottom: 12px; border-radius: 2px; }
+  .mini-bar-fill { height: 100%; background: var(--gold); border-radius: 2px; }
+
+  /* Classes das Imagens */
+  /* O radial-gradient cria uma "máscara" que escurece as bordas da foto */
+  .vignette { background-image: radial-gradient(circle, transparent 30%, rgba(0,0,0,0.8) 100%); position: absolute; inset: 0; z-index: 1; }
+
+  .img-blades { background-image: url('fotos/1-removebg-preview.png'); }
+  .img-axe { background-image: url('fotos/Modelo1-1.PNG-removebg-preview.png'); background-size: 90%; }
+  .img-spear { background-image: url('fotos/il_1140xN_1-removebg-preview.png'); background-size: 85%; }
+  .img-olympus { background-image: url('fotos/_image-removebg-preview.png'); }
+  .img-cestus { background-image: url('fotos/how-would-i-homebrew-the-nemean-cestus-for-my-barbarian-v0-2k6s419x0ri91-removebg-preview.png'); }
+  .img-hades { background-image: url('fotos/whats-your-opinion-about-the-claws-of-hades-v0-m1bjzaj7pw6c1-removebg-preview.png'); }
+  .img-nemesis { background-image: url('fotos/nemesis-whip-and-gauntlet-of-zeus-appreciation-post-v0-nn3s6p9ez3je1-removebg-preview.png'); }
+  .img-hammer { background-image: url('fotos/images-removebg-preview.png'); }
+  .img-gauntlet { background-image: url('fotos/Manopla_de_Zeus-removebg-preview.png'); }
+  .img-sparta { background-image: url('fotos/Armas_de_Esparta-removebg-preview.png'); }
+  .img-artemis { background-image: url('fotos/2c5aa8dd-1f42-46d6-8a2d-3f4dfd70296e-removebg-preview.png'); }
+  .img-exile { background-image: url('fotos/idk-if-this-is-a-hot-take-but-the-blades-of-exile-are-the-v0-2ghvlw4sp89c1.webp'); }
+  .img-apollo { background-image: url('fotos/colo.png'); }
+  .img-athena { background-image: url('fotos/Download_29-removebg-preview.png'); }
+  .img-speardestiny { background-image: url('fotos/images-removebg-preview (1).png'); }
+  .img-guardian { background-image: url('fotos/Escudo Guardião.png'); }
+  .img-medusa { background-image: url('fotos/images__1_-removebg-preview.png'); }
+  .img-typhon { background-image: url('fotos/1-012-removebg-preview.png'); }
+  .img-orkos { background-image: url('fotos/122-removebg-preview.png'); }
+  /* Animação de Glitch para o texto */
+  @keyframes glitchText {
+    0% { transform: translate(0); text-shadow: 2px 0 red, -2px 0 blue; }
+    20% { transform: translate(-2px, 2px); }
+    40% { transform: translate(-2px, -2px); text-shadow: -2px 0 red, 2px 0 blue; }
+    60% { transform: translate(2px, 2px); }
+    80% { transform: translate(2px, -2px); }
+    100% { transform: translate(0); }
+  }
+
+  /* Estilo Fúria Intensa */
+  body.intense-rage-mode {
+    animation: screenShake 0.1s infinite;
+    background: #1a0000 !important;
+  }
+
+  @keyframes screenShake {
+    0% { transform: translate(1px, 1px) rotate(0deg); }
+    50% { transform: translate(-1px, -2px) rotate(-1deg); }
+    100% { transform: translate(1px, 1px) rotate(0deg); }
+  }
+
+  body.intense-rage-mode .weapon-card {
+    border-color: var(--blood) !important;
+    box-shadow: 0 0 20px var(--blood);
+  }
+
+  /* Brilhos coloridos para cada tipo de arma no hover */
+  .weapon-card:hover .img-blades { filter: drop-shadow(0 0 15px var(--blood)); }
+  .weapon-card:hover .img-axe { filter: drop-shadow(0 0 15px #4a6fa5); }
+  .weapon-card:hover .img-spear { filter: drop-shadow(0 0 15px var(--gold)); }
+  .weapon-card:hover .img-hammer { filter: drop-shadow(0 0 15px #5a3e2b); }
+  .weapon-card:hover .img-gauntlet { filter: drop-shadow(0 0 15px #4a90e2); }
+  .weapon-card:hover .img-sparta { filter: drop-shadow(0 0 15px #8B0000); }
+  .weapon-card:hover .img-artemis { filter: drop-shadow(0 0 15px #9b59b6); }
+  .weapon-card:hover .img-exile { filter: drop-shadow(0 0 15px #ff4500); }
+  .weapon-card:hover .img-apollo { filter: drop-shadow(0 0 15px #f1c40f); }
+  .weapon-card:hover .img-athena { filter: drop-shadow(0 0 15px #ffd700); }
+  .weapon-card:hover .img-speardestiny { filter: drop-shadow(0 0 15px #9b59b6); }
+  .weapon-card:hover .img-guardian { filter: drop-shadow(0 0 15px #00d2ff); }
+  .weapon-card:hover .img-medusa { filter: drop-shadow(0 0 15px #2ecc71); }
+  .weapon-card:hover .img-typhon { filter: drop-shadow(0 0 15px #3498db); }
+  .weapon-card:hover .img-orkos { filter: drop-shadow(0 0 15px #e67e22); }
+
+  /* Adiciona um reflexo por cima da imagem */
+  .weapon-icon::after {
+    content: ''; position: absolute; inset: 0; 
+    background: linear-gradient(135deg, rgba(255,255,255,0.05) 0%, transparent 50%); 
+    pointer-events: none; z-index: 2;
+  }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-100vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Arsenal Lendário</p>
+  <h1 class="hero-title">ARMAS MAIS USADAS</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    
+    <div class="weapon-grid">
+      <!-- Lâminas do Caos -->
+      <div class="weapon-card">
+        <div class="usage-badge">48% de Uso</div>
+        <div class="weapon-icon img-blades"><div class="vignette"></div></div>
+        <span class="weapon-game">Toda a Franquia</span>
+        <h2 class="weapon-name">Lâminas do Caos</h2>
+        <p class="weapon-desc">As icônicas lâminas acorrentadas forjadas no Hades. Preferidas por sua velocidade e dano em área devastador contra hordas.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Machado Leviatã -->
+      <div class="weapon-card">
+        <div class="usage-badge">37% de Uso</div>
+        <div class="weapon-icon img-axe"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War (2018) / Ragnarök</span>
+        <h2 class="weapon-name">Machado Leviatã</h2>
+        <p class="weapon-desc">Forjado pelos irmãos Huldra para combater o Mjölnir. Oferece precisão cirúrgica e controle elemental de gelo superior.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lança Draupnir -->
+      <div class="weapon-card">
+        <div class="usage-badge">15% de Uso</div>
+        <div class="weapon-icon img-spear"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War Ragnarök</span>
+        <h2 class="weapon-name">Lança Draupnir</h2>
+        <p class="weapon-desc">A primeira arma forjada especificamente para um Deus enfrentar outro. Multiplica-se infinitamente e explode sob comando.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lâmina do Olimpo -->
+      <div class="weapon-card">
+        <div class="usage-badge">Poder Divino</div>
+        <div class="weapon-icon img-olympus"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War II / III</span>
+        <h2 class="weapon-name">Lâmina do Olimpo</h2>
+        <p class="weapon-desc">Forjada por Zeus para encerrar a Grande Guerra contra os Titãs. É a arma definitiva, capaz de obliterar exércitos inteiros com um único golpe.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%; background: var(--gold);"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Cestus de Nemeia -->
+      <div class="weapon-card">
+        <div class="usage-badge">Impacto Brutal</div>
+        <div class="weapon-icon img-cestus"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War III</span>
+        <h2 class="weapon-name">Cestus de Nemeia</h2>
+        <p class="weapon-desc">Tomadas de Hércules, estas manoplas de aço em forma de leão oferecem o maior poder de impacto da era grega, perfeitas para quebrar defesas.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>3/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 30%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Garras de Hades -->
+      <div class="weapon-card">
+        <div class="usage-badge">Almas Corrompidas</div>
+        <div class="weapon-icon img-hades"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War III</span>
+        <h2 class="weapon-name">Garras de Hades</h2>
+        <p class="weapon-desc">Armas que permitem ao portador arrancar a alma de seus inimigos e invocar legiões do submundo para lutar ao seu lado.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Chicote de Nêmesis -->
+      <div class="weapon-card">
+        <div class="usage-badge">Energia Elétrica</div>
+        <div class="weapon-icon img-nemesis"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War III</span>
+        <h2 class="weapon-name">Chicote de Nêmesis</h2>
+        <p class="weapon-desc">Forjado por Hefesto, este par de lâminas triplas conduz eletricidade e permite ataques encadeados extremamente velozes.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Martelo de Bárbaro -->
+      <div class="weapon-card">
+        <div class="usage-badge">Força Bruta</div>
+        <div class="weapon-icon img-hammer"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War II</span>
+        <h2 class="weapon-name">Martelo de Bárbaro</h2>
+        <p class="weapon-desc">Uma arma pesada tomada do Rei Bárbaro. Capaz de gerar ondas de choque e invocar almas penadas para esmagar os oponentes.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>4/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 40%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>2/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 20%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Manopla de Zeus -->
+      <div class="weapon-card">
+        <div class="usage-badge">Punho Divino</div>
+        <div class="weapon-icon img-gauntlet"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War: Chains of Olympus</span>
+        <h2 class="weapon-name">Manopla de Zeus</h2>
+        <p class="weapon-desc">Uma manopla gigante forjada por Hefesto. Permite desferir socos carregados com o poder do relâmpago, quebrando qualquer defesa.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>3/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 30%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>4/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 40%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Armas de Esparta -->
+      <div class="weapon-card">
+        <div class="usage-badge">Herança Militar</div>
+        <div class="weapon-icon img-sparta"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War: Ghost of Sparta</span>
+        <h2 class="weapon-name">Armas de Esparta</h2>
+        <p class="weapon-desc">A lança e o escudo tradicionais de um general espartano. Oferece um equilíbrio perfeito entre defesa impenetrável e ataques de estocada.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lâmina de Ártemis -->
+      <div class="weapon-card">
+        <div class="usage-badge">Caça Mágica</div>
+        <div class="weapon-icon img-artemis"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War I</span>
+        <h2 class="weapon-name">Lâmina de Ártemis</h2>
+        <p class="weapon-desc">Uma espada larga e curvada presenteada pela Deusa da Caça. Seus cortes são lentos, mas imbuídos de uma magia que corta o ferro como papel.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lâminas do Desterro -->
+      <div class="weapon-card">
+        <div class="usage-badge">Evolução Final</div>
+        <div class="weapon-icon img-exile"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War III</span>
+        <h2 class="weapon-name">Lâminas do Desterro</h2>
+        <p class="weapon-desc">Dadas por Atena no submundo, estas lâminas são a forma mais poderosa das armas acorrentadas na era grega.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Arco de Apolo -->
+      <div class="weapon-card">
+        <div class="usage-badge">Ataque à Distância</div>
+        <div class="weapon-icon img-apollo"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War III</span>
+        <h2 class="weapon-name">Arco de Apolo</h2>
+        <p class="weapon-desc">Permite disparar flechas de fogo em rápida sucessão, útil para resolver enigmas e manter inimigos à distância.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lâminas de Atena -->
+      <div class="weapon-card">
+        <div class="usage-badge">Honra Divina</div>
+        <div class="weapon-icon img-athena"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War II</span>
+        <h2 class="weapon-name">Lâminas de Atena</h2>
+        <p class="weapon-desc">Presenteadas pela própria Atena, estas lâminas brilham com um poder dourado e foram a principal ferramenta de Kratos durante seu tempo como Deus da Guerra.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Lança do Destino -->
+      <div class="weapon-card">
+        <div class="usage-badge">Magia Roxa</div>
+        <div class="weapon-icon img-speardestiny"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War II</span>
+        <h2 class="weapon-name">Lança do Destino</h2>
+        <p class="weapon-desc">Uma arma capaz de esticar e disparar projéteis de energia rúnica. Tomada de um herói caído, ela oferece ataques de perfuração precisos.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>8/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 80%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Escudo Guardião -->
+      <div class="weapon-card">
+        <div class="usage-badge">Defesa Perfeita</div>
+        <div class="weapon-icon img-guardian"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War (2018) / Ragnarök</span>
+        <h2 class="weapon-name">Escudo Guardião</h2>
+        <p class="weapon-desc">O fiel escudo retrátil de Kratos na era nórdica. Essencial para aparar golpes e desorientar inimigos com contra-ataques de concussão.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>2/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 20%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>9/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 90%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Cabeça de Medusa -->
+      <div class="weapon-card">
+        <div class="usage-badge">Petrificação</div>
+        <div class="weapon-icon img-medusa"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War I</span>
+        <h2 class="weapon-name">Cabeça de Medusa</h2>
+        <p class="weapon-desc">Arrancada da Rainha das Górgonas. Permite transformar inimigos em pedra instantaneamente, deixando-os vulneráveis a ataques esmagadores.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>2/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 20%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Arco de Tifão -->
+      <div class="weapon-card">
+        <div class="usage-badge">Magia de Vento</div>
+        <div class="weapon-icon img-typhon"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War II</span>
+        <h2 class="weapon-name">Arco de Tifão</h2>
+        <p class="weapon-desc">Arrancado do olho do Titã Tifão. Dispara rajadas de vento místico que podem atingir alvos distantes e criar pequenos tornados.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>4/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 40%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>10/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 100%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>7/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 70%;"></div></div>
+        </div>
+      </div>
+
+      <!-- Pedra do Juramento de Orkos -->
+      <div class="weapon-card">
+        <div class="usage-badge">Duplicata Tática</div>
+        <div class="weapon-icon img-orkos"><div class="vignette"></div></div>
+        <span class="weapon-game">God of War: Ascension</span>
+        <h2 class="weapon-name">Pedra de Orkos</h2>
+        <p class="weapon-desc">Um artefato dado por Orkos que permite a Kratos criar um clone de si mesmo para resolver quebra-cabeças ou flanquear inimigos em combate.</p>
+        <div class="attr-mini">
+          <div class="attr-mini-row"><span>Dano</span><span>6/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 60%;"></div></div>
+          <div class="attr-mini-row"><span>Alcance</span><span>2/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 20%;"></div></div>
+          <div class="attr-mini-row"><span>Velocidade</span><span>5/10</span></div>
+          <div class="mini-bar-bg"><div class="mini-bar-fill" style="width: 50%;"></div></div>
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"A arma é apenas tão boa quanto o guerreiro que a empunha."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#B8860B','#FF4500'];
+  for (let i = 0; i < 40; i++) {
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px; height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0; background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s; animation-delay:${del}s; --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,207 @@
+.ps2-document { scroll-behavior: auto; }
+
+.ps2-page {
+  min-height: 100vh;
+  color: #eee9e3;
+  background: #090909;
+}
+
+.ps2-page .music-widget { display: none; }
+
+.ps2-page main {
+  padding: 60px 24px 80px;
+}
+
+.ps2-hero {
+  min-height: 390px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 70px 20px 45px;
+  text-align: center;
+  background:
+    linear-gradient(90deg, rgba(9, 9, 9, .8), rgba(57, 0, 0, .2), rgba(9, 9, 9, .8)),
+    repeating-linear-gradient(0deg, transparent 0 39px, rgba(180, 26, 32, .08) 40px),
+    radial-gradient(ellipse at center, #390b0c 0, #160909 44%, #090909 78%);
+  border-bottom: 1px solid #562022;
+}
+
+.ps2-kicker {
+  color: #d1a455;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 4px;
+  text-transform: uppercase;
+}
+
+.ps2-hero h1 {
+  margin-top: 14px;
+  color: #f6f0e9;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 54px;
+  line-height: 1.15;
+  text-shadow: 0 5px 34px rgba(177, 22, 28, .45);
+}
+
+.ps2-hero h1 span { color: #c5232b; }
+
+.ps2-intro {
+  margin-top: 12px;
+  color: #b7a9a0;
+  font-family: 'IM Fell English', serif;
+  font-size: 18px;
+}
+
+.ps2-status {
+  display: flex;
+  gap: 12px;
+  margin-top: 32px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  min-width: 230px;
+  padding: 11px 15px;
+  border: 1px solid #3d2928;
+  background: rgba(10, 9, 9, .76);
+  text-align: left;
+}
+
+.status-light { width: 8px; height: 8px; flex: 0 0 auto; border-radius: 50%; background: #8fc47c; box-shadow: 0 0 10px #8fc47c; }
+.status-light--gold { background: #d1a455; box-shadow: 0 0 10px #d1a455; }
+.status-item strong, .status-item small { display: block; }
+.status-item strong { color: #f1e9df; font-size: 11px; letter-spacing: 1px; }
+.status-item small { margin-top: 3px; color: #a89c93; font-family: 'IM Fell English', serif; font-size: 14px; }
+
+.ps2-library, .setup-section { width: min(1050px, 100%); margin: 0 auto; }
+.ps2-library { padding: 54px 0 42px; }
+
+.section-heading {
+  display: flex;
+  align-items: end;
+  justify-content: space-between;
+  gap: 18px;
+  margin-bottom: 22px;
+}
+
+.section-heading h2, .file-panel h2 {
+  margin-top: 5px;
+  color: #f1e9df;
+  font-family: 'Cinzel Decorative', serif;
+  font-size: 25px;
+}
+
+.fullscreen-button, .play-button, .file-button {
+  min-height: 44px;
+  border: 1px solid #8e2227;
+  color: #f4ece5;
+  background: #75171c;
+  font-family: 'Cinzel', serif;
+  font-size: 11px;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: background .2s ease, border-color .2s ease, transform .2s ease;
+}
+
+.fullscreen-button { display: inline-flex; align-items: center; gap: 9px; padding: 0 14px; background: #171313; }
+.fullscreen-button span:first-child { font-size: 20px; line-height: 1; }
+.fullscreen-button:hover, .play-button:hover, .file-button:hover { background: #a21d25; border-color: #d0444a; }
+.fullscreen-button:active, .play-button:active, .file-button:active { transform: translateY(1px); }
+
+.game-library { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+
+.ps2-game {
+  display: grid;
+  grid-template-columns: 155px minmax(0, 1fr);
+  min-height: 218px;
+  overflow: hidden;
+  border: 1px solid #372324;
+  background: #151111;
+  transition: border-color .2s ease, background .2s ease;
+}
+
+.ps2-game:hover, .ps2-game.is-selected { border-color: #a62a31; background: #1c1213; }
+.game-cover { width: 155px; height: 100%; min-height: 218px; object-fit: cover; object-position: center; filter: saturate(.82) brightness(.82); }
+.game-copy { display: flex; flex-direction: column; align-items: flex-start; padding: 19px 17px; }
+.game-edition { color: #d1a455; font-size: 10px; letter-spacing: 1.5px; text-transform: uppercase; }
+.game-copy h3 { margin-top: 9px; color: #f3ece4; font-family: 'Cinzel Decorative', serif; font-size: 18px; }
+.game-copy > p:not(.game-edition) { margin-top: 7px; color: #a89c93; font-family: 'IM Fell English', serif; font-size: 15px; line-height: 1.4; }
+.play-button { display: flex; align-items: center; justify-content: space-between; gap: 19px; width: 100%; margin-top: auto; padding: 0 13px; scroll-margin-top: 90px; }
+.play-button span { font-size: 17px; }
+
+.file-panel {
+  display: grid;
+  grid-template-columns: 54px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 18px;
+  margin-top: 22px;
+  padding: 22px;
+  border: 1px solid #673034;
+  background: linear-gradient(110deg, #1a1011, #100e0e 68%);
+}
+
+.file-panel[hidden] { display: none; }
+.file-panel-mark { color: #c5232b; font-family: Georgia, serif; font-size: 43px; text-align: center; }
+.file-panel h2 { font-size: 19px; }
+.file-panel-copy > p:not(.ps2-kicker) { margin-top: 6px; color: #b4a69d; font-family: 'IM Fell English', serif; font-size: 15px; }
+.file-panel-copy .browser-note { max-width: 650px; margin-top: 10px !important; color: #8f837c !important; font-size: 14px !important; }
+.browser-note strong { color: #dfc58d; }
+.file-button { display: inline-flex; align-items: center; justify-content: center; padding: 0 18px; white-space: nowrap; }
+
+.setup-section { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+.setup-panel { border-top: 1px solid #57272b; border-bottom: 1px solid #302021; background: #100e0e; }
+.setup-panel summary { display: flex; align-items: center; gap: 13px; min-height: 75px; padding: 14px 18px; cursor: pointer; list-style: none; }
+.setup-panel summary::-webkit-details-marker { display: none; }
+.setup-icon { color: #cb3a3f; font-size: 23px; }
+.setup-panel summary strong, .setup-panel summary small { display: block; }
+.setup-panel summary strong { color: #eee7df; font-family: 'Cinzel', serif; font-size: 14px; }
+.setup-panel summary small { margin-top: 4px; color: #9d9088; font-family: 'IM Fell English', serif; font-size: 14px; }
+.setup-chevron { margin-left: auto; color: #d1a455; font-size: 23px; transition: transform .2s ease; }
+.setup-panel[open] .setup-chevron { transform: rotate(45deg); }
+.setup-content { padding: 0 18px 19px 54px; color: #aa9e96; font-family: 'IM Fell English', serif; font-size: 15px; line-height: 1.55; }
+.setup-content strong { color: #dec58f; font-weight: 400; }
+.control-map { margin-top: 13px; border-top: 1px solid #352526; }
+.control-map [role="row"] { display: flex; justify-content: space-between; gap: 12px; padding: 7px 0; border-bottom: 1px solid #292021; }
+.control-map [role="row"]:first-child { color: #d1a455; font-family: 'Cinzel', serif; font-size: 11px; }
+.control-map [role="cell"]:last-child { text-align: right; }
+.setup-steps { display: grid; gap: 10px; padding-left: 17px; }
+.setup-steps li::marker { color: #cf363c; }
+.setup-steps code { color: #e1c888; font-size: 13px; }
+.setup-disclaimer { margin-top: 12px; color: #81756f; font-size: 13px; }
+
+.ps2-footer { padding: 48px 20px 28px; color: #66534f; text-align: center; }
+.ps2-footer span { color: #822026; font-family: Georgia, serif; font-size: 30px; }
+.ps2-footer p { margin-top: 8px; font-size: 10px; letter-spacing: 3px; }
+
+@media (max-width: 760px) {
+  .ps2-page main { padding: 60px 16px 60px; }
+  .ps2-hero { min-height: 350px; padding-top: 78px; }
+  .ps2-hero h1 { font-size: 38px; }
+  .ps2-status { flex-direction: column; width: min(100%, 360px); }
+  .status-item { min-width: 0; }
+  .game-library { grid-template-columns: 1fr; }
+  .setup-section { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 480px) {
+  .ps2-page main { padding-right: 12px; padding-left: 12px; }
+  .ps2-hero h1 { font-size: 32px; }
+  .ps2-intro { max-width: 300px; font-size: 16px; }
+  .section-heading { align-items: flex-start; }
+  .section-heading h2 { font-size: 21px; }
+  .fullscreen-button { gap: 5px; padding: 0 9px; font-size: 9px; }
+  .ps2-game { grid-template-columns: 112px minmax(0, 1fr); min-height: 200px; }
+  .game-cover { width: 112px; min-height: 200px; }
+  .game-copy { padding: 14px 12px; }
+  .game-copy h3 { font-size: 15px; }
+  .game-copy > p:not(.game-edition) { font-size: 14px; }
+  .file-panel { grid-template-columns: 38px minmax(0, 1fr); gap: 11px; padding: 16px; }
+  .file-panel-mark { font-size: 32px; }
+  .file-panel h2 { font-size: 16px; }
+  .file-panel-copy .browser-note { grid-column: 1 / -1; }
+  .file-button { grid-column: 1 / -1; }
+  .setup-content { padding-left: 18px; }
+}

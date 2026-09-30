@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ÁRVORE GENEALÓGICA — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<link rel="apple-touch-icon" href="fotos/omega.png">
+<style>
+  *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .hero {
+    min-height: 60vh;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: radial-gradient(ellipse 80% 60% at 50% 70%, rgba(90,10,10,0.4) 0%, transparent 70%), #0D0B09;
+    border-bottom: 6px double var(--gold);
+  }
+
+  .hero-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(40px, 8vw, 80px);
+    color: #fff;
+    text-shadow: 0 0 30px rgba(139,0,0,0.9);
+    text-align: center;
+  }
+
+  .section { padding: 4rem 2rem; }
+  .section-inner { max-width: 1100px; margin: 0 auto; }
+  
+  .section-tag {
+    font-size: 10px;
+    letter-spacing: 0.5em;
+    color: var(--gold);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    text-align: center;
+  }
+
+  .section-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(24px, 4vw, 44px);
+    color: #fff;
+    line-height: 1.15;
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .pantheon-section {
+    margin-bottom: 4rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--stone);
+  }
+
+  .pantheon-section:last-of-type { border-bottom: none; margin-bottom: 0; }
+
+  .pantheon-title {
+    font-family: 'Cinzel Decorative', serif;
+    font-size: clamp(28px, 5vw, 36px);
+    color: var(--gold-light);
+    text-align: center;
+    margin-bottom: 2.5rem;
+    letter-spacing: 0.1em;
+  }
+
+  .generation {
+    margin-bottom: 5rem;
+    position: relative;
+  }
+
+  .generation-title {
+    font-family: 'Cinzel', serif;
+    font-size: clamp(18px, 3vw, 24px);
+    color: var(--ash);
+    text-align: center;
+    margin-bottom: 1.5rem;
+    position: relative;
+  }
+
+  .generation-title::after {
+    content: '';
+    display: block;
+    width: 2px;
+    height: 40px;
+    background: linear-gradient(to bottom, var(--blood), transparent);
+    margin: 0.8rem auto 0;
+  }
+
+  .generation::before {
+    content: '';
+    position: absolute;
+    top: -45px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 2px;
+    height: 45px;
+    background: linear-gradient(to top, var(--blood), transparent);
+  }
+
+  .pantheon-section .generation:first-of-type::before {
+    display: none;
+  }
+
+  .god-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+    gap: 1rem;
+    justify-items: center;
+  }
+
+  .god-card {
+    background: var(--dark2);
+    border: 1px solid #2a2018;
+    padding: 0;
+    text-align: center;
+    font-family: 'IM Fell English', serif;
+    font-size: 16px;
+    color: var(--ash);
+    transition: background 0.3s, border-color 0.3s;
+    width: 100%;
+    max-width: 180px; /* Limita a largura do card */
+    height: 70px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    cursor: pointer;
+  }
+
+  .god-card:hover,
+  .god-card.connection-glow {
+    border-color: var(--gold);
+  }
+
+  .god-name {
+    transition: opacity 0.3s, transform 0.3s;
+    padding: 0.5rem;
+    z-index: 1;
+  }
+
+  .god-info {
+    position: absolute;
+    inset: 0;
+    background: var(--dark3);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+    font-size: 11px;
+    color: var(--gold-light);
+    text-transform: uppercase;
+    line-height: 1.2;
+    z-index: 2;
+  }
+
+  .god-card:hover .god-name,
+  .god-card.connection-glow .god-name {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  .god-card:hover .god-info,
+  .god-card.connection-glow .god-info {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .god-card.connection-glow {
+    box-shadow: 0 0 20px var(--gold), inset 0 0 10px rgba(184, 134, 11, 0.4);
+    border-color: var(--gold-light) !important;
+    transform: scale(1.05);
+    z-index: 10;
+  }
+
+  /* ESTILO DO MODAL (TEXTO AO CLICAR) */
+  .modal {
+    display: none;
+    position: fixed;
+    z-index: 2000;
+    inset: 0;
+    background: rgba(0,0,0,0.9);
+    backdrop-filter: blur(10px);
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .modal-content {
+    background: var(--dark2);
+    border: 2px solid var(--gold);
+    padding: 3rem;
+    max-width: 600px;
+    width: 100%;
+    position: relative;
+    text-align: center;
+    box-shadow: 0 0 50px rgba(139, 0, 0, 0.3);
+    animation: modalFadeIn 0.4s ease;
+    z-index: 10;
+    background-size: cover;
+    background-position: center;
+    transition: background 0.5s ease;
+  }
+
+  /* FUNDOS PERSONALIZADOS POR PANTEÃO */
+  .modal-content.pantheon-grego {
+    background-image: linear-gradient(rgba(26, 20, 16, 0.92), rgba(26, 20, 16, 0.92)), url('fotos/greek-modal-bg.webp');
+  }
+
+  .modal-content.pantheon-nordico {
+    background-image: linear-gradient(rgba(26, 20, 16, 0.92), rgba(26, 20, 16, 0.92)), url('fotos/norse-modal-bg.webp');
+  }
+
+  /* EFEITO DE FUMAÇA/NÉVOA NO MODAL */
+  .smoke-wrap {
+    position: absolute;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    overflow: hidden;
+  }
+
+  .smoke-particle {
+    position: absolute;
+    width: 600px;
+    height: 600px;
+    background: radial-gradient(circle, rgba(139, 0, 0, 0.15), transparent 70%);
+    filter: blur(80px);
+    border-radius: 50%;
+    animation: smokeDrift 15s infinite alternate ease-in-out;
+  }
+
+  @keyframes smokeDrift {
+    0% { transform: translate(-20%, -20%) scale(1); opacity: 0.2; }
+    100% { transform: translate(20%, 20%) scale(1.5); opacity: 0.5; }
+  }
+
+  @keyframes modalFadeIn {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .close-modal {
+    position: absolute;
+    top: 1rem;
+    right: 1.5rem;
+    font-size: 32px;
+    color: var(--gold);
+    cursor: pointer;
+    transition: 0.3s;
+  }
+
+  .close-modal:hover { color: var(--blood); }
+
+  .embers { position: absolute; inset: 0; pointer-events: none; overflow: hidden; }
+  .spark { position: absolute; border-radius: 50%; animation: rise linear infinite; opacity: 0; }
+  @keyframes rise {
+    0% { transform: translateY(0) scale(1); opacity: 0; }
+    15% { opacity: 1; }
+    100% { transform: translateY(-70vh) translateX(var(--drift, 0px)) scale(0.2); opacity: 0; }
+  }
+
+  footer { text-align: center; padding: 4rem 2rem; border-top: 1px solid #1a1510; }
+  .footer-omega { font-size: 48px; color: var(--blood); opacity: 0.4; margin-bottom: 1rem; }
+
+  /* RESPONSIVIDADE */
+  @media (max-width: 768px) {
+    .hero-title { font-size: 40px; }
+    .section { padding: 2rem 1rem; }
+    .pantheon-title { font-size: 24px; }
+    .generation-title { font-size: 18px; }
+    .god-grid { grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); }
+  }
+</style>
+</head>
+<body>
+
+<!-- O Menu agora é gerado apenas pelo script.js para evitar erros -->
+
+<section class="hero">
+  <div class="embers" id="embers"></div>
+  <p style="letter-spacing: 0.5em; color: var(--gold); text-transform: uppercase; font-size: 12px; margin-bottom: 1rem;">Os Laços Divinos</p>
+  <h1 class="hero-title">ÁRVORE GENEALÓGICA</h1>
+</section>
+
+<div class="rage-btn-container">
+  <button class="rage-toggle" id="btnRage">L3 + R3: ATIVAR FÚRIA</button>
+  <button class="rage-toggle reset-btn" id="btnReset">RECOMEÇAR JORNADA</button>
+</div>
+
+<section class="section">
+  <div class="section-inner">
+    <p class="section-tag">Linhas de Sangue</p>
+    <h2 class="section-title">A Complexa Teia dos Deuses</h2>
+
+    <div class="pantheon-section">
+      <h3 class="pantheon-title">Panteão Grego</h3>
+      <div class="generation">
+        <h4 class="generation-title">Primordiais</h4>
+        <div class="god-grid">
+          <div class="god-card" data-bio="A personificação da Terra e avó de Zeus. Ela guiou Kratos em sua vingança contra o Olimpo antes de sua traição final."><span class="god-name">Gaia</span><div class="god-info">Mãe Terra</div></div>
+          <div class="god-card" data-bio="O governante original do universo e pai dos Titãs. Foi derrubado por seu filho Cronos."><span class="god-name">Urano</span><div class="god-info">Pai dos Titãs</div></div>
+          <div class="god-card" data-bio="A personificação do submundo mais profundo, onde os Titãs foram aprisionados após a Grande Guerra."><span class="god-name">Tártaro</span><div class="god-info">O Abismo</div></div>
+          <div class="god-card" data-bio="A personificação da escuridão primordial que preenchia as regiões profundas do mundo."><span class="god-name">Érebo</span><div class="god-info">As Trevas</div></div>
+          <div class="god-card" data-bio="Uma divindade primordial que personifica a noite, possuindo um poder que até Zeus temia."><span class="god-name">Nix</span><div class="god-info">A Noite</div></div>
+        </div>
+      </div>
+      <div class="generation">
+        <h4 class="generation-title">Titãs</h4>
+        <div class="god-grid">
+          <div class="god-card" data-bio="O Titã que devorou seus próprios filhos. Foi condenado por Zeus a carregar o Templo de Pandora em suas costas no deserto."><span class="god-name">Cronos</span><div class="god-info">Pai de Zeus</div></div>
+          <div class="god-card" data-bio="Irmã e esposa de Cronos, que salvou Zeus de ser devorado pelo pai, escondendo-o em Creta."><span class="god-name">Reia</span><div class="god-info">Mãe de Zeus</div></div>
+          <div class="god-card" data-bio="O general Titã condenado a segurar o pilar que sustenta o mundo após a derrota na Titanomaquia."><span class="god-name">Atlas</span><div class="god-info">Carrega o Mundo</div></div>
+          <div class="god-card" data-bio="O Titã que roubou o fogo para os mortais. Kratos o encontrou sendo torturado e o libertou de seu sofrimento."><span class="god-name">Prometeu</span><div class="god-info">Criador dos Homens</div></div>
+          <div class="god-card" data-bio="Irmão de Prometeu e Atlas, lutou ao lado dos Titãs contra os deuses olímpicos."><span class="god-name">Epimeteu</span><div class="god-info">Irmão de Prometeu</div></div>
+          <div class="god-card" data-bio="O grande Titã que personifica o rio que circunda o mundo, pai de todas as águas."><span class="god-name">Oceano</span><div class="god-info">Titã das Águas</div></div>
+          <div class="god-card" data-bio="A Titã feminina das águas doces e esposa de Oceano, mãe das principais divindades fluviais."><span class="god-name">Tétis</span><div class="god-info">Titã dos Mares</div></div>
+        </div>
+      </div>
+      <div class="generation">
+        <h4 class="generation-title">Olimpianos</h4>
+        <div class="god-grid">
+          <div class="god-card" data-bio="O Rei dos Deuses e pai de Kratos. Sua paranoia após abrir a Caixa de Pandora o levou a tentar destruir seu próprio filho."><span class="god-name">Zeus</span><div class="god-info">Rei do Olimpo</div></div>
+          <div class="god-card" data-bio="A Rainha do Olimpo. Sua morte pelas mãos de Kratos causou a morte de toda a vida vegetal na Grécia."><span class="god-name">Hera</span><div class="god-info">Rainha do Olimpo</div></div>
+          <div class="god-card" data-bio="O Deus do Mar. Sua derrota brutal por Kratos desencadeou um dilúvio que submergiu o mundo grego."><span class="god-name">Poseidon</span><div class="god-info">Rei dos Mares</div></div>
+          <div class="god-card" data-bio="O governante do Submundo. Kratos usou suas próprias garras para arrancar sua alma e abrir caminho pelo Hades."><span class="god-name">Hades</span><div class="god-info">Rei do Submundo</div></div>
+          <div class="god-card" data-bio="O primeiro Deus da Guerra e mentor de Kratos. Sua traição forçou Kratos a matar sua própria família, criando o Fantasma de Esparta."><span class="god-name">Ares</span><div class="god-info">Ex-Deus da Guerra</div></div>
+          <div class="god-card" data-bio="A deusa da sabedoria. Ela tentou proteger o Olimpo, mas acabou se sacrificando para salvar Zeus de Kratos."><span class="god-name">Atena</span><div class="god-info">Sábia Estrategista</div></div>
+          <div class="god-card" data-bio="A Deusa da Beleza. Diferente de seus irmãos, ela não lutou contra Kratos durante o cerco ao Olimpo."><span class="god-name">Afrodite</span><div class="god-info">Deusa do Amor</div></div>
+          <div class="god-card" data-bio="O mestre ferreiro. Ele forjou a Caixa de Pandora e tentou trair Kratos para proteger sua 'filha' Pandora."><span class="god-name">Hefesto</span><div class="god-info">O Ferreiro</div></div>
+          <div class="god-card" data-bio="O mensageiro rápido. Kratos decepou suas pernas para adquirir suas botas aladas durante a queda do Olimpo."><span class="god-name">Hermes</span><div class="god-info">O Mensageiro</div></div>
+          <div class="god-card" data-bio="A Deusa da Caça. Ela forneceu a Kratos uma lâmina mágica para ajudá-lo em sua jornada original."><span class="god-name">Ártemis</span><div class="god-info">Deusa da Caça</div></div>
+          <div class="god-card" data-bio="O Deus do Sol. Kratos arrancou sua cabeça com as próprias mãos para usá-la como uma lanterna no Submundo."><span class="god-name">Apolo</span><div class="god-info">Deus do Sol</div></div>
+          <div class="god-card" data-bio="O Deus do Vinho e da Loucura, um dos muitos olimpianos que caíram diante da fúria espartana."><span class="god-name">Dionísio</span><div class="god-info">Deus do Vinho</div></div>
+          <div class="god-card" data-bio="Deusa da agricultura, cujo sofrimento contribuiu para o caos ecológico após a destruição do Olimpo."><span class="god-name">Deméter</span><div class="god-info">Deusa das Colheitas</div></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="pantheon-section">
+      <h3 class="pantheon-title">Panteão Nórdico</h3>
+      <div class="generation">
+        <h4 class="generation-title">Aesir</h4>
+        <div class="god-grid">
+          <div class="god-card" data-bio="O astuto e implacável Rei de Asgard. Ele usa manipulação e magia para controlar os Nove Reinos e evitar o Ragnarök."><span class="god-name">Odin</span><div class="god-info">O Pai de Todos</div></div>
+          <div class="god-card" data-bio="A Rainha de Asgard, também conhecida como Freya. Mãe de Baldur, ela tentou desesperadamente protegê-lo do destino."><span class="god-name">Frigga</span><div class="god-info">Rainha de Asgard</div></div>
+          <div class="god-card" data-bio="O campeão de Odin e Deus do Trovão. Um guerreiro de poder inigualável que luta para equilibrar seu dever com sua natureza destrutiva."><span class="god-name">Thor</span><div class="god-info">Deus do Trovão</div></div>
+          <div class="god-card" data-bio="O filho de Freya amaldiçoado com a invulnerabilidade. Sua incapacidade de sentir qualquer coisa o levou à loucura."><span class="god-name">Baldur</span><div class="god-info">O Invulnerável</div></div>
+          <div class="god-card" data-bio="O vigilante de Asgard com sentidos divinos. Sua lealdade absoluta a Odin o tornou um obstáculo mortal para Kratos."><span class="god-name">Heimdall</span><div class="god-info">O Vigilante</div></div>
+          <div class="god-card" data-bio="O antigo Deus da Guerra nórdico que buscava a paz. Suas viagens por outras mitologias inspiraram Kratos."><span class="god-name">Týr</span><div class="god-info">O Deus da Guerra</div></div>
+          <div class="god-card" data-bio="O Deus silencioso e poderoso, um dos filhos de Odin que sobreviveria ao fim dos tempos."><span class="god-name">Vidar</span><div class="god-info">Deus da Vingança</div></div>
+        </div>
+      </div>
+      <div class="generation">
+        <h4 class="generation-title">Vanir</h4>
+        <div class="god-grid">
+          <div class="god-card" data-bio="Uma deusa Vanir e ex-Rainha das Valquírias. Aliada fiel, depois inimiga jurada e, finalmente, companheira de Kratos."><span class="god-name">Freya</span><div class="god-info">Líder das Vanir</div></div>
+          <div class="god-card" data-bio="O Deus Vanir do mar e do vento, pai de Freya e Frey, e uma figura central na paz entre os panteões."><span class="god-name">Njord</span><div class="god-info">Pai de Freya</div></div>
+        </div>
+      </div>
+      <div class="generation">
+        <h4 class="generation-title">Outros</h4>
+        <div class="god-grid">
+          <div class="god-card card-kratos" data-bio="O Fantasma de Esparta. Após destruir o Olimpo, ele busca redenção e uma vida de paz como pai nas terras nórdicas."><span class="god-name">Kratos</span><div class="god-info">O Fantasma de Esparta</div></div>
+          <div class="god-card card-atreus" data-bio="Filho de Kratos e Faye. Conhecido como Loki, ele busca entender sua identidade e seu papel nas profecias dos gigantes."><span class="god-name">Atreus</span><div class="god-info">Filho de Kratos</div></div>
+          <div class="god-card" data-bio="A gigantesca serpente que circunda Midgard. Uma aliada crucial que possui uma rivalidade eterna com Thor."><span class="god-name">Jörmungandr</span><div class="god-info">Serpente do Mundo</div></div>
+          <div class="god-card" data-bio="O lobo gigante destinado a devorar o sol. Atreus usou sua alma para salvar o animal e cumprir a profecia."><span class="god-name">Fenrir</span><div class="god-info">O Lobo Gigante</div></div>
+          <div class="god-card" data-bio="A governante de Helheim. Uma figura mística que preside sobre os mortos que não foram para Valhalla."><span class="god-name">Hela</span><div class="god-info">Deusa dos Mortos</div></div>
+          <div class="god-card" data-bio="O homem mais sábio do mundo. Embora seja apenas uma cabeça revivida, seu conselho é a maior arma de Kratos."><span class="god-name">Mímir</span><div class="god-info">O Sábio</div></div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ESTRUTURA DO MODAL -->
+<div id="god-modal" class="modal">
+  <div class="smoke-wrap">
+    <div class="smoke-particle" style="top: -10%; left: -10%;"></div>
+    <div class="smoke-particle" style="bottom: -10%; right: -10%; animation-delay: -7s;"></div>
+    <div class="smoke-particle" style="top: 20%; right: 0; width: 400px; height: 400px; background: radial-gradient(circle, rgba(20, 0, 0, 0.5), transparent 70%);"></div>
+    <div class="smoke-particle" style="bottom: 20%; left: 0; width: 500px; height: 500px; background: radial-gradient(circle, rgba(0, 0, 0, 0.7), transparent 70%); animation-duration: 20s;"></div>
+  </div>
+  <div class="modal-content">
+    <span class="close-modal" id="closeModal">&times;</span>
+    <h2 id="modal-name" class="pantheon-title" style="margin-bottom: 1.5rem; border-bottom: 1px solid var(--stone); padding-bottom: 1rem;"></h2>
+    <p id="modal-text" style="font-family: 'IM Fell English', serif; font-size: 18px; line-height: 1.6; color: var(--ash);"></p>
+  </div>
+</div>
+
+<footer>
+  <!-- Elemento de áudio oculto -->
+  <audio id="scrollSound" preload="auto">
+    <source src="https://www.myinstants.com/pt/instant/god-of-war-2018-48607/?utm_source=copy&utm_medium=share&utm_campaign=copy" type="audio/mpeg">
+  </audio>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"O destino de um é o destino de todos."</p>
+  <p class="footer-text">Kratos &nbsp;·&nbsp; God of War &nbsp;·&nbsp; Santa Monica Studio</p>
+</footer>
+
+<script>
+  const container = document.getElementById('embers');
+  const colors = ['#8B0000','#A52020','#CD5C5C','#B8860B','#FF6600','#FF4500'];
+  for (let i = 0; i < 50; i++) { // Reduzido para mobile
+    const s = document.createElement('div');
+    s.className = 'spark';
+    const size = Math.random() * 3 + 1;
+    const dur  = (Math.random() * 5 + 3).toFixed(1);
+    const del  = (Math.random() * 5).toFixed(1);
+    const drift = ((Math.random() - 0.5) * 80).toFixed(0);
+    s.style.cssText = `
+      width:${size}px;
+      height:${size}px;
+      left:${(Math.random() * 100).toFixed(1)}%;
+      bottom: 0;
+      background:${colors[Math.floor(Math.random() * colors.length)]};
+      animation-duration:${dur}s;
+      animation-delay:${del}s;
+      --drift:${drift}px;
+    `;
+    container.appendChild(s);
+  }
+
+  // Ajuste para reduzir brasas em telas menores
+  if (window.innerWidth <= 768) {
+    const embers = document.querySelectorAll('#embers .spark');
+    for (let i = 0; i < embers.length; i++) {
+      if (i >= 20) { // Mantém apenas 20 brasas no mobile
+        embers[i].remove();
+      }
+    }
+  }
+
+  // Lógica do Modal de Informações
+  const modal = document.getElementById('god-modal');
+  const modalName = document.getElementById('modal-name');
+  const modalText = document.getElementById('modal-text');
+  const closeModal = document.getElementById('closeModal');
+  const scrollSound = document.getElementById('scrollSound');
+
+  document.querySelectorAll('.god-card').forEach(card => {
+    card.addEventListener('click', () => {
+      const name = card.querySelector('.god-name').innerText;
+      const info = card.querySelector('.god-info').innerText;
+      const bio = card.getAttribute('data-bio') || "Um ser de poder imenso cujas ações ecoam pelos ciclos da história mitológica.";
+      
+      // Identifica o panteão para mudar o fundo do modal
+      const pantheonTitle = card.closest('.pantheon-section').querySelector('.pantheon-title').innerText;
+      const modalBody = modal.querySelector('.modal-content');
+      
+      modalBody.classList.remove('pantheon-grego', 'pantheon-nordico');
+      modalBody.classList.add(pantheonTitle.includes('Grego') ? 'pantheon-grego' : 'pantheon-nordico');
+      
+      modalName.innerText = name;
+      modalText.innerText = bio;
+      
+      // Reproduz o som de pergaminho abrindo
+      scrollSound.currentTime = 0;
+      scrollSound.play().catch(e => console.log("Áudio bloqueado aguardando interação do usuário."));
+
+      modal.style.display = 'flex';
+    });
+  });
+
+  closeModal.onclick = () => modal.style.display = 'none';
+  window.onclick = (event) => {
+    if (event.target == modal) modal.style.display = 'none';
+  }
+
+  // Lógica de conexão visual Kratos <-> Atreus
+  const kratosCard = document.querySelector('.card-kratos');
+  const atreusCard = document.querySelector('.card-atreus');
+
+  if (kratosCard && atreusCard) {
+    [kratosCard, atreusCard].forEach(card => {
+      card.addEventListener('mouseenter', () => {
+        kratosCard.classList.add('connection-glow');
+        atreusCard.classList.add('connection-glow');
+      });
+      card.addEventListener('mouseleave', () => {
+        kratosCard.classList.remove('connection-glow');
+        atreusCard.classList.remove('connection-glow');
+      });
+    });
+  }
+</script>
+<script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,14 @@
+{
+  "name": "kratos-ps2-launcher",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Launcher desktop local para os jogos de PS2 selecionados pelo usuário.",
+  "main": "main.cjs",
+  "scripts": {
+    "start": "electron .",
+    "test": "node --check main.cjs && node --check preload.cjs && node --check js/emulador-ps2.js"
+  },
+  "devDependencies": {
+    "electron": "^35.0.0"
+  }
+}

@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#0d0b09">
+<title>ROLETA DOS REINOS — God of War</title>
+<link href="https://fonts.googleapis.com/css2?family=Cinzel+Decorative:wght@700;900&family=Cinzel:wght@400;600;700&family=IM+Fell+English:ital@0;1&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<link rel="icon" href="fotos/omega.png" type="image/png" sizes="32x32">
+<style>
+  body { min-height: 100vh; background: radial-gradient(ellipse at 50% 8%, rgba(139,0,0,.2), transparent 45%), var(--dark); }
+  .roulette-page { width: min(1120px, 100%); margin: 0 auto; padding: 100px 24px 72px; }
+  .page-heading { display: flex; align-items: end; justify-content: space-between; gap: 24px; padding: 22px 0 24px; border-bottom: 1px solid var(--stone); }
+  .eyebrow { color: var(--gold); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; }
+  h1 { margin-top: 8px; color: #fff; font: 900 clamp(32px, 5vw, 54px)/1.1 'Cinzel Decorative', serif; }
+  .page-intro { max-width: 500px; margin-top: 10px; color: var(--muted); font: 17px/1.5 'IM Fell English', serif; }
+  .page-mark { flex: 0 0 auto; color: rgba(218,165,32,.75); font: 76px/.8 'Cinzel Decorative', serif; text-shadow: 0 0 24px rgba(139,0,0,.6); }
+  .roulette-layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(260px,.68fr); gap: 54px; align-items: center; padding: 32px 0 0; }
+  .roulette-stage { display: flex; flex-direction: column; align-items: center; }
+  .category-tabs { display: grid; grid-template-columns: repeat(4,1fr); gap: 4px; width: min(100%, 520px); margin-bottom: 27px; border-bottom: 1px solid var(--stone); }
+  .category-tab { position: relative; min-width: 0; padding: 11px 4px 13px; border: 0; background: transparent; color: var(--muted); font: 600 10px 'Cinzel', serif; text-align: center; cursor: pointer; }
+  .category-tab[aria-pressed="true"] { color: var(--gold-light); }
+  .category-tab[aria-pressed="true"]::after { position: absolute; right: 10%; bottom: -1px; left: 10%; height: 2px; background: var(--gold); content: ''; }
+  .wheel-wrap { position: relative; width: min(78vw, 390px); aspect-ratio: 1; padding: 11px; border: 1px solid rgba(184,134,11,.55); border-radius: 50%; background: radial-gradient(circle, #1b100c, #080706 74%); box-shadow: 0 0 0 5px rgba(184,134,11,.07), 0 0 48px rgba(139,0,0,.25); }
+  .wheel-pointer { position: absolute; z-index: 4; top: -9px; left: 50%; width: 0; height: 0; border-right: 15px solid transparent; border-left: 15px solid transparent; border-top: 28px solid var(--gold-light); filter: drop-shadow(0 2px 6px rgba(0,0,0,.8)); transform: translateX(-50%); }
+  .wheel { position: relative; width: 100%; height: 100%; overflow: hidden; border: 4px solid #2a1b12; border-radius: 50%; background: conic-gradient(from -22.5deg, #8b1711 0deg 45deg, #2a2118 45deg 90deg, #5c2315 90deg 135deg, #211b16 135deg 180deg, #8b1711 180deg 225deg, #2a2118 225deg 270deg, #5c2315 270deg 315deg, #211b16 315deg 360deg); box-shadow: inset 0 0 0 2px rgba(218,165,32,.5), inset 0 0 34px rgba(0,0,0,.6); transition: transform 5s cubic-bezier(.08,.72,.08,1); }
+  .wheel::before { position: absolute; inset: 0; border-radius: 50%; background: repeating-conic-gradient(from -22.5deg, transparent 0deg 44.5deg, rgba(218,165,32,.62) 44.5deg 45deg); content: ''; }
+  .wheel-label { position: absolute; top: 50%; left: 50%; display: grid; place-items: center; width: 80px; min-height: 32px; padding: 4px; color: #f1e5d1; font: 600 9px/1.2 'Cinzel', serif; text-align: center; text-shadow: 0 1px 5px #000; transform: translate(-50%,-50%) rotate(var(--angle)) translateY(-126px) rotate(calc(var(--angle) * -1)); }
+  .wheel-hub { position: absolute; z-index: 2; top: 50%; left: 50%; display: grid; place-items: center; width: 64px; aspect-ratio: 1; border: 3px solid var(--gold-light); border-radius: 50%; background: radial-gradient(circle, #36120d, #120b08 72%); color: var(--gold-light); font: 24px 'Cinzel Decorative', serif; box-shadow: 0 0 18px rgba(0,0,0,.75), 0 0 16px rgba(184,134,11,.34); transform: translate(-50%,-50%); pointer-events: none; }
+  .wheel.is-spinning { filter: brightness(1.15); }
+  .spin-button { min-width: 190px; min-height: 48px; margin-top: 25px; padding: 12px 22px; border: 1px solid var(--gold-light); background: var(--gold); color: #130e08; font: 700 12px 'Cinzel', serif; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: color .2s ease, background .2s ease, transform .2s ease, box-shadow .2s ease; }
+  .spin-button:hover:not(:disabled) { background: transparent; color: var(--gold-light); box-shadow: 0 0 20px rgba(184,134,11,.24); transform: translateY(-2px); }
+  .spin-button:disabled { cursor: wait; opacity: .65; }
+  .spin-button:focus-visible, .category-tab:focus-visible, .clear-history:focus-visible { outline: 2px solid var(--gold-light); outline-offset: 3px; }
+  .roulette-status { min-height: 22px; margin-top: 10px; color: var(--muted); font: 15px 'IM Fell English', serif; text-align: center; }
+  .result-panel { min-height: 350px; padding: 23px 0 23px 26px; border-left: 1px solid var(--stone); }
+  .result-kicker { color: var(--gold); font: 9px 'Cinzel', serif; letter-spacing: .2em; text-transform: uppercase; }
+  .result-title { margin-top: 10px; color: #fff; font: 700 clamp(24px, 3.5vw, 34px)/1.15 'Cinzel Decorative', serif; }
+  .result-category { margin-top: 7px; color: var(--muted); font: 15px 'IM Fell English', serif; }
+  .result-description { margin-top: 18px; color: var(--ash); font: 17px/1.55 'IM Fell English', serif; }
+  .result-mark { display: grid; place-items: center; width: 100%; height: 170px; margin-top: 25px; border-top: 1px solid var(--stone); border-bottom: 1px solid var(--stone); background: radial-gradient(ellipse at center, rgba(139,0,0,.19), transparent 67%); color: rgba(218,165,32,.55); font: 72px 'Cinzel Decorative', serif; }
+  .result-mark img { width: 100%; height: 100%; object-fit: contain; padding: 8px; }
+  .result-placeholder { color: rgba(218,165,32,.6); }
+  .history-section { margin-top: 38px; padding-top: 20px; border-top: 1px solid var(--stone); }
+  .history-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .history-heading h2 { color: var(--gold-light); font: 600 13px 'Cinzel', serif; letter-spacing: .07em; }
+  .clear-history { padding: 6px 0; border: 0; background: transparent; color: var(--dim); font: 10px 'Cinzel', serif; cursor: pointer; }
+  .clear-history:hover { color: var(--embers); }
+  .history-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+  .history-entry { padding: 8px 10px; border: 1px solid var(--stone); color: var(--ash); font: 14px 'IM Fell English', serif; }
+  .history-entry span { display: block; margin-bottom: 3px; color: var(--dim); font: 8px 'Cinzel', serif; letter-spacing: .12em; text-transform: uppercase; }
+  .history-empty { color: var(--dim); font: 15px 'IM Fell English', serif; }
+  [hidden] { display: none !important; }
+  @media (max-width: 800px) { .roulette-page { padding: 88px 18px 55px; } .roulette-layout { grid-template-columns: 1fr; gap: 28px; } .result-panel { min-height: 0; padding: 22px 0 0; border-top: 1px solid var(--stone); border-left: 0; } .result-mark { height: 125px; margin-top: 16px; } .history-section { margin-top: 22px; } }
+  @media (max-width: 430px) { .roulette-page { padding-right: 12px; padding-left: 12px; } .page-heading { align-items: start; } .page-mark { font-size: 48px; } .wheel-wrap { width: min(84vw, 350px); } .wheel-label { width: 66px; font-size: 8px; transform: translate(-50%,-50%) rotate(var(--angle)) translateY(-108px) rotate(calc(var(--angle) * -1)); } .wheel-hub { width: 54px; font-size: 20px; } .category-tab { font-size: 8px; } }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; } }
+</style>
+</head>
+<body>
+<main class="roulette-page">
+  <header class="page-heading">
+    <div>
+      <p class="eyebrow">A sorte dos Nove Reinos</p>
+      <h1>Roleta de God of War</h1>
+      <p class="page-intro">Escolha uma categoria e deixe o destino decidir seu próximo personagem, arma, inimigo ou reino.</p>
+    </div>
+    <span class="page-mark" aria-hidden="true">Ω</span>
+  </header>
+
+  <div class="roulette-layout">
+    <section class="roulette-stage" aria-label="Roleta de sorteio">
+      <div class="category-tabs" role="group" aria-label="Categoria da roleta">
+        <button class="category-tab" type="button" data-category="characters" aria-pressed="true">Personagens</button>
+        <button class="category-tab" type="button" data-category="weapons" aria-pressed="false">Armas</button>
+        <button class="category-tab" type="button" data-category="enemies" aria-pressed="false">Inimigos</button>
+        <button class="category-tab" type="button" data-category="realms" aria-pressed="false">Reinos</button>
+      </div>
+      <div class="wheel-wrap">
+        <span class="wheel-pointer" aria-hidden="true"></span>
+        <div class="wheel" id="wheel" role="img" aria-label="Roleta pronta para girar"></div>
+        <span class="wheel-hub" aria-hidden="true">Ω</span>
+      </div>
+      <button class="spin-button" id="spin-button" type="button">Girar a roleta</button>
+      <p class="roulette-status" id="roulette-status" role="status" aria-live="polite">O destino está em suas mãos.</p>
+    </section>
+
+    <section class="result-panel" aria-labelledby="result-title">
+      <p class="result-kicker" id="result-kicker">Resultado da roleta</p>
+      <h2 class="result-title" id="result-title">Aguardando o destino</h2>
+      <p class="result-category" id="result-category">Escolha uma categoria e gire.</p>
+      <p class="result-description" id="result-description">Cada giro escolhe um resultado ao acaso entre as opções da categoria selecionada.</p>
+      <div class="result-mark" id="result-mark" aria-hidden="true"><span class="result-placeholder">Ω</span></div>
+      <section class="history-section" aria-labelledby="history-title">
+        <div class="history-heading">
+          <h2 id="history-title">Últimos resultados</h2>
+          <button class="clear-history" id="clear-history" type="button">Limpar histórico</button>
+        </div>
+        <div class="history-list" id="history-list" aria-live="polite"></div>
+      </section>
+    </section>
+  </div>
+</main>
+
+<footer>
+  <div class="footer-omega">Ω</div>
+  <p class="footer-tagline">"O destino é o que fazemos dele."</p>
+  <p class="footer-text">Kratos · God of War · Santa Monica Studio</p>
+</footer>
+
+<script>
+  const rouletteCategories = {
+    characters: {
+      label: 'Personagem',
+      items: [
+        { name: 'Kratos Jovem', description: 'O Fantasma de Esparta da era grega.', image: 'Kratos-vs-poseidon-god-of-war-3-8017.webp' },
+        { name: 'Kratos Nórdico', description: 'O Deus da Guerra que atravessou os Nove Reinos.', image: 'Kratos_GoW_Ragnarok.jpg' },
+        { name: 'Atreus', description: 'Loki, arqueiro e filho de Kratos.', image: 'EGS_GodofWar_SantaMonicaStudio_S2_1200x1600-fbdf3cbc2980749091d52751ffabb7b7_1200x1600-fbdf3cbc2980749091d52751ffabb7b7.jfif' },
+        { name: 'Thor', description: 'O temível Deus do Trovão de Asgard.', image: 'god-of-war-ragnaroks-thor-design-is-peak-and-so-is-his-v0-v6o7s9iddkqc1.webp' },
+        { name: 'Zeus', description: 'Rei do Olimpo e pai de Kratos.', image: 'Zeus_-_Ascension.webp' },
+        { name: 'Sigrun', description: 'A Rainha das Valquírias.', image: 'painting-of-sigrun-the-valkyrie-queen-v0-n8euz5simjo81.webp' },
+        { name: 'Ares', description: 'O antigo Deus da Guerra e mestre de Kratos.', image: 'Godofwarascension_poster_ares_additions_01.webp' },
+        { name: 'Hades', description: 'Senhor do Submundo na Grécia antiga.', image: '250px-Hades_-_Ascension.webp' }
+      ]
+    },
+    weapons: {
+      label: 'Arma',
+      items: [
+        { name: 'Lâminas do Caos', description: 'Correntes flamejantes ligadas ao passado de Kratos.' },
+        { name: 'Machado Leviatã', description: 'Um machado mágico forjado pelos irmãos Huldra.' },
+        { name: 'Lança Draupnir', description: 'Uma lança que se multiplica e explode sob comando.' },
+        { name: 'Mjölnir', description: 'O martelo lendário de Thor.' },
+        { name: 'Lâmina do Olimpo', description: 'Uma arma divina carregada com o poder de Zeus.' },
+        { name: 'Garras de Hades', description: 'Garras capazes de arrancar as almas dos inimigos.' },
+        { name: 'Chicote de Nêmesis', description: 'Lâminas elétricas da saga grega.' },
+        { name: 'Manoplas de Zeus', description: 'Punhos divinos de força devastadora.' }
+      ]
+    },
+    enemies: {
+      label: 'Inimigo',
+      items: [
+        { name: 'Baldur', description: 'O deus nórdico que não sente dor.' },
+        { name: 'Garm', description: 'A fera colossal de Helheim.' , image: 'Garm.webp' },
+        { name: 'Nidhogg', description: 'A criatura que ameaça as raízes de Yggdrasil.', image: 'Nidhogg.webp' },
+        { name: 'Valquíria', description: 'Guerreira alada de ataques velozes.', image: 'painting-of-sigrun-the-valkyrie-queen-v0-n8euz5simjo81.webp' },
+        { name: 'Minotauro', description: 'Uma criatura feroz da mitologia grega.', image: 'Minotaure_GOW_III.webp' },
+        { name: 'Centauro', description: 'Um guerreiro híbrido que guarda os campos de batalha.', image: 'centauro.webp' },
+        { name: 'Hidra', description: 'Monstro de muitas cabeças que se regenera.' },
+        { name: 'Cronos', description: 'O titã ancestral que enfrentou Kratos.', image: 'Cronos.webp' }
+      ]
+    },
+    realms: {
+      label: 'Reino',
+      items: [
+        { name: 'Midgard', description: 'O reino dos humanos e ponto de partida da saga nórdica.' },
+        { name: 'Asgard', description: 'Lar dos Aesir e de Odin.' },
+        { name: 'Vanaheim', description: 'Terra ancestral dos Vanir.' },
+        { name: 'Alfheim', description: 'Reino dos elfos luminosos e sombrios.' },
+        { name: 'Jotunheim', description: 'A terra dos gigantes.' },
+        { name: 'Helheim', description: 'O reino gelado dos mortos.' },
+        { name: 'Muspelheim', description: 'Reino de fogo e provas de combate.' },
+        { name: 'Niflheim', description: 'Terra de névoa, frio e labirintos.' }
+      ]
+    }
+  };
+  const historyKey = 'godOfWarRouletteHistory';
+  const wheel = document.getElementById('wheel');
+  const spinButton = document.getElementById('spin-button');
+  let activeCategory = 'characters';
+  let isSpinning = false;
+  let currentRotation = 0;
+
+  function renderWheel() {
+    const items = rouletteCategories[activeCategory].items;
+    const segmentAngle = 360 / items.length;
+    wheel.replaceChildren();
+    wheel.style.background = `conic-gradient(from ${-segmentAngle / 2}deg, ${items.map((_, index) => {
+      const colors = ['#8b1711', '#2a2118', '#5c2315', '#211b16'];
+      return `${colors[index % colors.length]} ${index * segmentAngle}deg ${(index + 1) * segmentAngle}deg`;
+    }).join(', ')})`;
+    items.forEach((item, index) => {
+      const label = document.createElement('span');
+      label.className = 'wheel-label';
+      label.style.setProperty('--angle', `${index * segmentAngle}deg`);
+      label.textContent = item.name;
+      wheel.append(label);
+    });
+    wheel.setAttribute('aria-label', `Roleta de ${rouletteCategories[activeCategory].label.toLocaleLowerCase('pt-BR')} pronta para girar`);
+  }
+
+  function readHistory() {
+    try {
+      const history = JSON.parse(localStorage.getItem(historyKey) || '[]');
+      return Array.isArray(history) ? history.slice(0, 5) : [];
+    } catch { return []; }
+  }
+
+  function renderHistory() {
+    const list = document.getElementById('history-list');
+    const history = readHistory();
+    list.replaceChildren();
+    document.getElementById('clear-history').hidden = history.length === 0;
+    if (!history.length) {
+      const empty = document.createElement('p');
+      empty.className = 'history-empty';
+      empty.textContent = 'Seus próximos resultados aparecem aqui.';
+      list.append(empty);
+      return;
+    }
+    history.forEach(entry => {
+      const chip = document.createElement('p');
+      chip.className = 'history-entry';
+      const category = document.createElement('span');
+      category.textContent = entry.category;
+      chip.append(category, document.createTextNode(entry.name));
+      list.append(chip);
+    });
+  }
+
+  function showResult(item) {
+    const category = rouletteCategories[activeCategory];
+    document.getElementById('result-kicker').textContent = 'O destino escolheu';
+    document.getElementById('result-title').textContent = item.name;
+    document.getElementById('result-category').textContent = category.label;
+    document.getElementById('result-description').textContent = item.description;
+    const mark = document.getElementById('result-mark');
+    mark.replaceChildren();
+    if (item.image) {
+      const image = document.createElement('img');
+      image.src = `fotos/${item.image}`;
+      image.alt = item.name;
+      mark.append(image);
+    } else {
+      const symbol = document.createElement('span');
+      symbol.className = 'result-placeholder';
+      symbol.textContent = activeCategory === 'weapons' ? '⚔' : activeCategory === 'realms' ? 'ᛟ' : 'Ω';
+      mark.append(symbol);
+    }
+    const history = readHistory();
+    history.unshift({ category: category.label, name: item.name });
+    try { localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 5))); } catch {}
+    const today = new Date();
+    const dayKey = `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}-${String(today.getDate()).padStart(2, '0')}`;
+    window.awardGodOfWarProgress?.({ id: `roulette:${dayKey}:${activeCategory}`, xp: 5, medal: 'wheel-of-fate', relic: 'fate-relic', stat: 'rouletteSpins' });
+    renderHistory();
+  }
+
+  function spin() {
+    if (isSpinning) return;
+    isSpinning = true;
+    spinButton.disabled = true;
+    document.querySelectorAll('.category-tab').forEach(button => { button.disabled = true; });
+    const category = rouletteCategories[activeCategory];
+    const resultIndex = Math.floor(Math.random() * category.items.length);
+    const segmentAngle = 360 / category.items.length;
+    const landingRotation = (360 - resultIndex * segmentAngle) % 360;
+    const currentNormalized = ((currentRotation % 360) + 360) % 360;
+    const extraRotation = (landingRotation - currentNormalized + 360) % 360;
+    currentRotation += 360 * 6 + extraRotation;
+    wheel.classList.add('is-spinning');
+    wheel.setAttribute('aria-label', 'Roleta girando');
+    wheel.style.transform = `rotate(${currentRotation}deg)`;
+    document.getElementById('roulette-status').textContent = 'A roleta está girando...';
+    const finishSpin = () => {
+      wheel.removeEventListener('transitionend', finishSpin);
+      isSpinning = false;
+      spinButton.disabled = false;
+      wheel.classList.remove('is-spinning');
+      wheel.setAttribute('aria-label', `Resultado: ${category.items[resultIndex].name}`);
+      document.querySelectorAll('.category-tab').forEach(button => { button.disabled = false; });
+      document.getElementById('roulette-status').textContent = 'O destino foi revelado.';
+      showResult(category.items[resultIndex]);
+    };
+    wheel.addEventListener('transitionend', finishSpin, { once: true });
+  }
+
+  document.querySelectorAll('.category-tab').forEach(button => {
+    button.addEventListener('click', () => {
+      if (isSpinning) return;
+      activeCategory = button.dataset.category;
+      document.querySelectorAll('.category-tab').forEach(tab => tab.setAttribute('aria-pressed', String(tab === button)));
+      document.getElementById('result-kicker').textContent = 'Resultado da roleta';
+      document.getElementById('result-title').textContent = 'Aguardando o destino';
+      document.getElementById('result-category').textContent = `Categoria: ${rouletteCategories[activeCategory].label}`;
+      document.getElementById('result-description').textContent = 'Gire a roleta para descobrir seu próximo resultado.';
+      const mark = document.getElementById('result-mark');
+      mark.replaceChildren();
+      const symbol = document.createElement('span');
+      symbol.className = 'result-placeholder';
+      symbol.textContent = 'Ω';
+      mark.append(symbol);
+      currentRotation = 0;
+      wheel.style.transition = 'none';
+      wheel.style.transform = 'rotate(0deg)';
+      void wheel.offsetWidth;
+      wheel.style.transition = '';
+      renderWheel();
+    });
+  });
+  spinButton.addEventListener('click', spin);
+  document.getElementById('clear-history').addEventListener('click', () => {
+    try { localStorage.removeItem(historyKey); } catch {}
+    renderHistory();
+  });
+  renderWheel();
+  renderHistory();
+</script>
+<script src="script.js"></script>
+</body>
+</html>
