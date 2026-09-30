@@ -25,7 +25,7 @@ jobs:
       - name: Upload site
         uses: actions/upload-pages-artifact@v3
         with:
-          path: ./kratos123-main
+          path: .
 
       - name: Deploy to GitHub Pages
         id: deployment
